@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "ScheduleIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        List Of Applicant
+        @*<small>&nbsp;</small>*@
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Applications</a></li>
+        <li class="active">Applications List</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="box">
+        <div class="box-header with-border">
+            <div class="pull-left">
+                <br>
+            </div>
+            @*<h3 class="box-title"><input type="button" class="btn btn-primary btn-sm" value="Add New Vacancy" /></h3>*@
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                        title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button type="button" disabled class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="box">
+                <div class="box-body">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>FirstName </th>
+                                <th>Surname</th>
+                                <th>Date Applied</th>
+                                <th>Job Applied For</th>
+                                <th>Location</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (ViewBag.AcceptedApplicationList != null)
+                            {
+                                foreach (var item in ViewBag.AcceptedApplicationList)
+                                {
+                                <tr>
+                                    <td>@item.FirstName</td>
+                                    <td>@item.Surname</td>
+                                    <td>@item.ApplicationDate</td>
+                                    <td>@item.JobTitle</td>
+                                    <td>@item.Location</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-success">Action</button>
+                                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+
+                                            <ul class="dropdown-menu" role="menu">
+
+                                                <a href="@Url.Action("ScheduleInterview", "ScheduleInterview", new { id = @item.ApplicationID })"><span class="fa fa-send success" style="color:green"></span> Schedule Interview</a>
+
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                }
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            @*Footer*@
+            &nbsp;
+        </div>
+        <!-- /.box-footer-->
+    </div>
+    <!-- /.box -->
+</section>
+

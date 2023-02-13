@@ -1,0 +1,60 @@
+﻿@using System.Data.Linq
+@{
+    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+    eRecruitmentDataAccess _dal = new eRecruitmentDataAccess();
+}
+
+@using Microsoft.AspNet.Identity
+
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @*<ul class="nav navbar-nav navbar-right">*@
+                <ul class="nav navbar-nav ">
+                    <li>
+                        @{
+                            string Fullname = null;
+                            string uid = User.Identity.GetUserId();
+                            var data = _db.tblProfiles.Where(x => x.UserID == uid).FirstOrDefault();
+                            if (data != null)
+                            {
+                                Fullname = string.Format("{0}", data.FirstName);
+                            }
+
+
+                        }
+                        
+                        
+                        <a href="#">Hello  @Fullname !</a>
+                        @*@Html.ActionLink("Welcome back " + User.Identity.GetUserName(), "", "", routeValues: null, htmlAttributes: new { title = "" })*@
+                        @*@Html.ActionLink("Hello " + @Fullname, "", "", routeValues: null, htmlAttributes: new { title = "" })*@
+                    </li>
+                    <li>
+                        <a href="~/eRecruitmentSITACivilian/story_html5.html" target="_blank">Online Help</a>
+                    </li>
+                    <li>
+                        @*<input type="submit" value="Log off" class="btn btn-primary btn-xs"  /> &nbsp;*@
+                        @*<a href="/Home/LogOff"><span class="fa fa-sign-out"></span> Log Off</a>*@
+                        <a href='@Url.Action("LogOff", "Home")'>
+                            <i class="fa fa-sign-out"></i>
+                            <span> Log Off </span>
+                        </a>
+                    </li>
+                    @*<li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>*@
+                    @*<li><a href="@System.Configuration.ConfigurationManager.AppSettings["LogOutURL"]">Log off</a></li>*@
+
+                </ul>
+
+        }
+    }
+    else
+    {
+        <ul class="nav navbar-nav navbar-right">
+            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        </ul>
+    }

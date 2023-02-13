@@ -1,0 +1,104 @@
+﻿@model IEnumerable<eRecruitment.Sita.Web.Models.Profile_LangauageModel>
+
+@{
+    Layout = null;
+
+    AjaxOptions details = new AjaxOptions
+    {
+        //Confirm = "Save these changes?",
+        OnBegin = "OnBeginDetailMethod",
+        OnFailure = "OnFailtureDetailMethod",
+        OnSuccess = "OnSuccessDetailMethod",
+        OnComplete = "OnCompleteDetailMethod"
+    };
+}
+<p>
+    <input type="button" value="Create New" class="btn btn-primary" onclick="getAddLangFunc()" />
+</p>
+<div class="box-body">
+    <div class="box">
+        <div class="box-body">
+            <table id="example4" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Language Name</th>
+                        <th>Proficiency</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (@ViewBag.LanguagesForProfile != null)
+                    {
+                        foreach (var item in ViewBag.LanguagesForProfile)
+                        {
+                            <tr>
+                                <td>@item.LanguageName</td>
+                                <td>@item.LanguageProficiency</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success">Action</button>
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                @*<a href='@Url.Action("DeleteProfile_Langauage","CareerCenter", new { id = @item.LanguageID})' onclick="return confirm('Are You Sure You Want to Delete?')"><span class="fa fa-trash red" style="color:red"></span>Remove</a>*@
+                                                <a href="" onclick="getDeleteLanguageFunc(@item.profileLanguageID)"><span class="fa fa-trash red" style="color:red"></span>Remove</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+</div>
+<!-- /.box-body -->
+
+
+<script type="text/javascript">
+    function getAddLangFunc() {
+        $("#getLanguageTable").load('@(Url.Action("AddLanguages", "CareerCenter"))');
+    }
+
+    function getDeleteLanguageFunc(data) {
+        $("#getLanguageTable").load('@(Url.Action("DeleteProfil_Langauage", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+
+    var isError = false;
+    function OnBeginDetailMethod() {
+        $("#divDetailsStatus").text("Loading ....");
+    }
+
+    function OnFailtureDetailMethod(error) {
+        $("#errormessages").text(error.responseText);
+        $("#divDetailsStatus").text("");
+        isError = true;
+    }
+
+    function OnSuccessDetailMethod(data) {
+        $("#divDetailsStatus").text("Processed the data Successfully!");
+        closemodal();
+        $("#getLanguageTable").load('@(Url.Action("getLanguages", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        isError = false;
+    }
+
+    function closemodal() {
+        var elements = document.getElementsByClassName('modal-backdrop in');
+        while (elements.length > 0) {
+            elements[0].classList.remove('modal-backdrop');
+        }
+    }
+    function OnCompleteDetailMethod(data, status) {
+        if (!isError) {
+            $("#divDetailsStatus").text("Request status: " + status);
+        }
+    }
+</script>

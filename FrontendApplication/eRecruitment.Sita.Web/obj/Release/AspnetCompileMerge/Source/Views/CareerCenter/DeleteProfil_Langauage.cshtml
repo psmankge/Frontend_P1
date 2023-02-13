@@ -1,0 +1,69 @@
+﻿@model eRecruitment.Sita.Web.Models.CandidateLanguageProfileModel
+@{
+    Layout = null;
+}
+<h3>Are You Sure You Want To Delete This?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.LanguageName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LanguageName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LanguageProficiency)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LanguageProficiency)
+        </dd>
+
+    </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <button class="btn btn-warning" onclick="getDeleteLangFunc(@Model.profileLanguageID)" type="button" data-toggle="tooltip" data-placement="top"> Confirm</button> |
+                <button class="btn btn-primary" onclick="getDeletePLFunc(@Model.profileLanguageID)" type="button" data-toggle="tooltip" data-placement="top"> Back to List</button>
+            </div>
+        }
+</div>
+
+<script>
+    function getDeletePLFunc(data) {
+        $("#getLanguageTable").load('@(Url.Action("getLanguages", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+
+    function getDeleteLangFunc(id) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteProfile_Langauage", "CareerCenter")'+ '?id=' + id,
+            contentType: false,
+            processData: false,
+            data: { "id": id },
+            success: function (data) {
+                $("#getLanguageTable").load('@(Url.Action("getLanguages", "CareerCenter"))');
+                },
+            error: function (xhr, status, p3, p4) {
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                $("#divDetailsStatus").text(err);
+            }
+        });
+
+        function OnSuccessDetailMethod(data) {
+            $("#divDetailsStatus").text("Processed the data Successfully!");
+            closemodal();
+            $("#getLanguageTable").load('@(Url.Action("getLanguages", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+            isError = false;
+        }
+
+    }
+</script>

@@ -1,0 +1,2253 @@
+﻿@model IEnumerable<eRecruitment.Sita.Web.Models.ProfileModel>
+
+@using Microsoft.AspNet.Identity;
+@using System.Data.Linq
+@{
+    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+
+    eRecruitmentDataAccess _dal = new eRecruitmentDataAccess();
+    string userid = User.Identity.GetUserId();
+
+}
+<head>
+
+    @*<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css">*@
+    @*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>*@
+    <script type="text/javascript" src="https://rawgit.com/betsol/angular-input-date/master/src/angular-input-date.js"></script>
+</head>
+<body>
+    <section class="content-header">
+        <h1>
+
+            &nbsp;
+            @*Profile*@
+            @*<small>it all starts here</small>*@
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="~/Home/Jobs"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="~/Candidate/MyProfile">My Career Center</a></li>
+            <li class="active">User Profile</li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="box">
+
+          <div class="box-header with-border">
+            <h3 class="box-title">My Profile</h3>
+            
+            <div class="box box-success" style="width:100%; border: 2px solid #3CB371; box-shadow:inset 0 1px 1px rgba(0,0,0,0.075); padding: 10px; margin-top: 10px;">
+                @*<marquee direction="left" bgcolor="white" style="font-weight: bold;">Please Note: Candidate Profile is only required to be completed once, then candidate can continue to apply for different jobs. Once the profile is completed, system will allow the candidate to update the profile at any given time.</marquee>*@
+                <marquee direction="left" bgcolor="white" style="font-weight: bold;">Please ensure that 'Personal Information', 'Education History', 'Work History' and 'Skills' fields on your profile is the same as information on your CV. This information will be utilised for shortlisting purposes!</marquee>
+            </div>
+
+
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                      title="Collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+              <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" disabled title="Remove">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+            @Html.AntiForgeryToken()
+            <div style="color:red">
+              @Html.ValidationSummary()
+            </div>
+            <div class="box-body">
+              <section class="content">
+                <div class="row">
+                  <div class="col-md-3">
+                    <!-- Profile Image -->
+                    <div class="box box-primary">
+                      <div class="box-body box-profile">
+                        <div class="btn-group">
+                          <ul class="dropdown-menu success" id="Test" role="menu">
+                            <li><a href="#" data-toggle="modal" data-target="#modal-default">Upload Profile Picture</a></li>
+                            @*<li><a href='@Html.ActionLink("UploadProfilePicture", "Candidate")'>Remove Image </a></li>*@
+                          </ul>
+                        </div>
+                        @{
+                            string Fullname = string.Empty;
+                            string Address = string.Empty;
+
+                            var data = _db.tblProfiles.Where(x => x.UserID == userid).FirstOrDefault();
+                            if (data != null)
+                            {
+                                Fullname = string.Format("{0} {1}", data.FirstName, data.Surname);
+                                Address = string.Format("{0}, {1}", data.ComplexName, data.City);
+
+                                var base64 = (string)null;
+                                if (data != null)
+                                {
+                                    if (data.ProfilePicture != null)
+                                    {
+                                        base64 = Convert.ToBase64String(data.ProfilePicture.ToArray());
+                                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                                <img class="profile-user-img img-responsive img-circle" title="Click image for more options" style="width:160px;height:160px" id="imgFileUpload" src="@imgSrc" alt="User profile picture">
+                                    }
+
+                                }
+                            }
+                        }
+                        <h3 class="profile-username text-center">@Fullname</h3>
+                        @*<p class="text-muted text-center">Software Engineer</p>*@
+                      </div>
+                      <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                    <!-- About Me Box -->
+                    <div class="box box-primary">
+                      <div class="box-header with-border">
+                        <h3 class="box-title">About Me</h3>
+                      </div>
+                      <!-- /.box-header -->
+                      <div class="box-body">
+                        <strong><i class="margin-r-5"></i> Education</strong>
+                        <p class="text-muted">
+                          @{
+                              string uid = User.Identity.GetUserId();
+                              var qual = (from a in _db.tblCandidateEducations
+                                          join b in _db.tblProfiles on a.ProfileID equals b.pkProfileID
+                                          join c in _db.lutQualificationTypes on a.QualificationTypeID equals c.QualificationTypeID
+                                          where b.UserID == uid
+                                          orderby a.QualificationTypeID descending
+                                          select new
+                                          {
+                                              QualificationType = c.QualificationTypeName,
+                                              InstitutionName = a.InstitutionName,
+                                              QualificationName = a.QualificationName
+                                          }).Take(1);
+
+                          }
+                          @if (qual != null)
+                          {
+                              foreach (var q in qual)
+                              {
+                                  string qualname = string.Format("{0} from the University of {1}", @q.QualificationName, @q.InstitutionName);
+                              <div> @qualname</div>
+                              }
+                          }
+                        </p>
+                        <hr>
+                        <strong><i class="margin-r-5"></i> Location</strong>
+                        <p class="text-muted">@Address</p>
+                        <hr>
+                        <strong><i class="margin-r-5"></i> Skills</strong>
+                        <p>
+                          @*@{
+                      var skillsData = from a in _db.tblSkillsProfiles
+                                       join b in _db.lutSkills on a.skillID equals b.skillID
+                                       join c in _db.tblProfiles on a.profileID equals c.pkProfileID
+                                       where c.UserID == userid
+                                       select new
+                                       {
+                                           SkillName = b.skillName
+                                       };
+
+                      var skills = skillsData.ToList();
+                  }*@
+                          @if (ViewBag.SkillsProf != null)
+                          {
+                              foreach (var d in ViewBag.SkillsProf)
+                              {
+                              <span class="label label-success">@d.skillName</span>
+                              }
+                          }
+                          else
+                          {
+                            <span class="label label-danger">No Skills Added</span>
+                          }
+                        </p>
+                      </div>
+                      <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                  </div>
+                  <!-- /.col -->
+
+                  <div class="col-md-9">
+                    <div id="tab" class="nav-tabs-custom">
+                      <ul class="nav nav-tabs">
+                        <li class="active"><a href="#activity" data-toggle="tab">Personal Information</a></li>
+                        <li><a href="#education" ng-click="GetCandidateEducationData();GetQualificationTypeList();GetYearListData();GetMonthListData();GetDayListData()" data-toggle="tab">Education History</a></li>
+                        <li><a href="#workhistory" ng-click="GetCandidateWorkHistoryData()" data-toggle="tab">Work History</a></li>
+                        <li><a href="#skills" ng-click="GetCandidateSkillsData();GetSkillsTypeList();GetSkillProficiencyList()" data-toggle="tab">Skills</a></li>
+                        <li><a href="#languages" ng-click="GetCandidateLanguagesData();GetLanguageProficiencyList();GetLanguagesList()" data-toggle="tab">Languages</a></li>
+                        <li><a href="#references" ng-click="GetCandidateReferenceData()" data-toggle="tab">References</a></li>
+                        @*<li><a href="#attachments" ng-click="GetCandidateAttachmentData()" data-toggle="tab">Attachments</a></li>*@
+                      </ul>
+                      <div class="tab-content">
+                        <div class="tab-pane active" id="activity">
+                          <!-- Post -->
+                          @using (Html.BeginForm("UpdateProfile", "Candidate", FormMethod.Post, new { @class = "form-horizontal uploadMyProfileForm", enctype = "multipart/form-data", role = "form", id = "myForm" }))
+                          {
+
+                            @Html.AntiForgeryToken()
+                            <div style="color:red">
+                              @Html.ValidationSummary()
+                            </div>
+
+                              foreach (var item in Model)
+                              {
+                              @*<div style="color:red">
+                          @Html.ValidationSummary()
+                      </div>*@
+                              <br />
+                              <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">ID Number<span class="required" style="color:red;"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.IDNumber, null, new { @id = "IDNum", @class = "form-control", @readonly = "readonly", placeholder = "Enter ID Number", required = "required", value = "", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">Passport Number<span class="required" style="color:red;"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.PassportNumber, null, new { @id = "PassportNumber", @class = "form-control", @readonly = "readonly", placeholder = "Enter Passport Number", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputSurname" class="col-sm-2 control-label">Surname<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.Surname, null, new { @class = "form-control", placeholder = "Enter surname", @readonly = "readonly", required = "required", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputName" class="col-sm-2 control-label">First Name<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.FirstName, null, new { @id = "FirstName", @readonly = "readonly", @class = "form-control", placeholder = "Enter Name", required = "required", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="col-sm-2 control-label" for="date01">Date of Birth<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.EditorFor(i => item.DateOfBirth, "{0:dd/MM/yyyy}", new { htmlAttributes = new { @id = "DateOfBirth", @class = "form-control", @type = "text", placeholder = "Date of Birth", tabindex = 7 } })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputRace" class="col-sm-2 control-label">Race<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkRaceID, new SelectList(ViewBag.Race, "RaceID", "RaceName", item.fkRaceID, "--Select Race--"), new { @class = "form-control", id = "RaceID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputGender" class="col-sm-2 control-label">Gender<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkGenderID, new SelectList(ViewBag.Gender, "GenderID", "Gender", item.fkGenderID, "--Select Gender--"), new { @class = "form-control", id = "GenderID", required = "required" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputContactNo" class="col-sm-2 control-label">Contact No<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.CellNo, null, new { @maxLength = "10", @id = "CellNo", @class = "form-control", @readonly = "readonly", placeholder = "Enter contactNo", required = "required", value = "", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputAlternative" class="col-sm-2 control-label">Alternative No</label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.AlternativeNo, null, new { @maxLength = "10", @id = "AlternativeNo", @class = "form-control", placeholder = "Enter Alternative Contact No", value = "", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputEmail" class="col-sm-2 control-label">Email<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.EmailAddress, null, new { @id = "EmailAddress", @class = "form-control", @readonly = "readonly", placeholder = "Enter Email", required = "required", value = "", type = "email" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputUnitNo" class="col-sm-2 control-label">Unit No<span class="required" style="color:red;"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.UnitNo, null, new { @id = "UnitNo", @class = "form-control", placeholder = "Enter Unit No", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputComplex" class="col-sm-2 control-label">Complex<span class="required" style="color:red;"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.ComplexName, null, new { @id = "ComplexName", @class = "form-control", placeholder = "Enter Complex", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputStreetNo" class="col-sm-2 control-label">Street No<span class="required" style="color:red;"></span></label>
+                                <div class="col-sm-10">
+                                  @*@Html.TextBoxFor(i => item.StreetNo, null, new { @id = "StreetNo", @class = "form-control", placeholder = "Enter Street No", value = "", onkeypress = "return isNumberKey(event)" })*@
+                                  @Html.TextBoxFor(i => item.StreetNo, null, new { @id = "StreetNo", @class = "form-control", placeholder = "Enter Street No", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputStreetName" class="col-sm-2 control-label">Street Name<span class="required" style="color:red;"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.StreetName, null, new { @id = "StreetName", @class = "form-control", placeholder = "Enter Street Name", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputSuburb" class="col-sm-2 control-label">Suburb<span class="required"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.SuburbName, null, new { @id = "SuburbName", @class = "form-control", placeholder = "Enter Suburb", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <label for="inputProvince" class="col-sm-2 control-label">Province<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkProvinceID, new SelectList(ViewBag.Province, "ProvinceID", "ProvinceName", item.fkProvinceID, "--Select Province--"), new { @class = "form-control", id = "fkProvinceID", required = "required" })
+                                </div>
+                              </div>
+
+                              <div class="form-group">
+                                <label for="inputCity" class="col-sm-2 control-label">City<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.City, null, new { @id = "City", @class = "form-control", placeholder = "Enter City", required = "required", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputPostalCode" class="col-sm-2 control-label">Postal Code<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.PostalCode, null, new { @maxLength = "4", @id = "postalCode", @class = "form-control", placeholder = "Enter Postal Code", required = "required", value = "", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group" id="ProfessionallyRegistered">
+                                <label for="inputDriversLicence" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Do you have valid driver's License?<span class="required red" style="color:red;"> * </span></label>
+                                @*<label for="inputDriversLicence" class="col-sm-2 control-label">Driver's License?<span class="required" style="color:red;"> * </span></label>*@
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.DriversLicenseID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.DriversLicenseID, "---Please Select---"), new { @class = "form-control", id = "DriversLicenseID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="ProfessionallyRegistered">
+                                <label for="inputMatricCompleted" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Have you completed matric or equivalent?<span class="required red" style="color:red;"> * </span></label>
+                                @*<label for="inputMatricCompleted" class="col-sm-2 control-label">Completed Matric?<span class="required" style="color:red;"> * </span></label>*@
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.MatricID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.MatricID, "---Please Select---"), new { @class = "form-control", id = "MatricID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group" id="ProfessionallyRegistered">
+                                <label for="inputProfessionallyRegistered" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp;&nbsp; Are you professionally registered?<span class="required" style="color:red;"> * </span></label>
+                                @*<label for="inputProfessionallyRegistered" class="col-sm-2 control-label">Are You Professionally Registered?<span class="required" style="color:red;"> * </span></label>*@
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.ProfessionallyRegisteredID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.ProfessionallyRegisteredID, "---Select....---"), new { @class = "form-control", onchange = "CheckProfessionallyRegistered()", id = "ProfessionallyRegisteredID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="RegistrationDate">
+                                <label for="inputRegistrationDate" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp;&nbsp; Registration Date<span class="required"></span></label>
+                                @*<label for="inputRegistrationDate" class="col-sm-2 control-label">Registration Date</label>*@
+                                <div class="col-sm-10">
+                                  @Html.EditorFor(i => item.RegistrationDate, "{0:dd/MM/yyyy}", new { htmlAttributes = new { @id = "RegistrationDate", @class = "form-control", @type = "date", placeholder = "RegistrationDate", tabindex = 7, value = @item.RegistrationDate } })
+                                </div>
+                              </div>
+                              <div class="form-group" id="RegistrationNumber">
+                                <label for="inputRegistrationNumber" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp;&nbsp; Registration Number<span class="required"></span></label>
+                                @*<label for="inputRegistrationNumber" class="col-sm-2 control-label">Registration Number</label>*@
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.RegistrationNumber, null, new
+                             {
+                                 @id = "RegistrationNumber",
+                                 @class = "form-control",
+                                 placeholder = "Enter Registration Number",
+                                 value = ""@*, onKeyPress = "return ValidateAlpha(event);"*@})
+                                </div>
+                              </div>
+                              <div class="form-group" id="RegistrationBody">
+                                <label for="inputRegistrationBody" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp;&nbsp; Registration Body<span class="required"></span></label>
+                                @*<label for="inputRegistrationBody" class="col-sm-2 control-label">Registration Body</label>*@
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.RegistrationBody, null, new { @id = "RegistrationBody", @class = "form-control", placeholder = "Enter Registration Body", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group" id="PreviouslyEmployedPS">
+                                <label for="inputPreviouslyEmployedPS" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Were you previously employed in the Public Service?<span class="required red" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.PreviouslyEmployedPS, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.PreviouslyEmployedPS, "---Select....---"), new { @class = "form-control", onchange = "CheckPreviouslyEmployedPS()", id = "PreviouslyEmployedPSID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="ProfessionallyRegistered">
+                                <label for="inputConditionsThatPreventsReEmployment" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp;&nbsp; Are there any conditions that prevents your re-employment?<span class="required" style="color:red;"> * </span></label>
+                                @*<label for="inputProfessionallyRegistered" class="col-sm-2 control-label">Are You Professionally Registered?<span class="required" style="color:red;"> * </span></label>*@
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.ConditionsThatPreventsReEmploymentID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.ConditionsThatPreventsReEmploymentID, "---Select....---"), new { @class = "form-control", onchange = "CheckAnyconditionsPreventing()", id = "ConditionsThatPreventsReEmploymentID", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="ReEmployment">
+                                <label for="inputPreviouslyEmployedDepartment" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; If Yes please specify@*<span class="required red" style="color:red;"> * </span>*@</label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.ReEmploy, null, new { @id = "ReEmploy", @class = "form-control", placeholder = "Enter Conditions", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="PreviouslyEmployedDepartment">
+                                <label for="inputPreviouslyEmployedDepartment" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Provide the name of the previous employing department@*<span class="required red" style="color:red;"> * </span>*@</label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.PreviouslyEmployedDepartment, null, new { @id = "PreviouslyEmployedDepartment", @class = "form-control", placeholder = "Enter Department", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <hr>
+
+                              <div class="form-group">
+                                <label for="inputDisability" class="col-sm-2 control-label">Disability<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkDisabilityID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.fkDisabilityID, "--Please Select--"), new { @class = "form-control", onchange = "CheckDisability()", id = "AnswerID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="DisabilityDetails">
+                                <label for="inputDisabilityDetails" class="col-sm-2 control-label">Disability Details<span class="required"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.NatureOfDisability, new SelectList(ViewBag.Disability, "DisabilityID", "Disability", item.NatureOfDisability, "---Select Nature Of Disability...---"), new { @class = "form-control", onchange = "CheckDisabilityNature()", id = "DisabilityID", required = "required", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="OtherNatureOfDisability">
+                                <label for="inputOtherNatureOfDisability" class="col-sm-2 control-label">If Other, Details</label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.OtherNatureOfDisability, null, new { @id = "OtherNatureOfDisability", @class = "form-control", placeholder = "Enter Nature if Disability is Other", value = "", onKeyPress = "return ValidateAlpha(event);" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputRSACitizen" class="col-sm-2 control-label">RSA Citizen<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.SACitizen, new SelectList(ViewBag.Citizenship, "CitizenID", "SACitizen", item.SACitizen, "--Please Select---"), new { @class = "form-control", onchange = "CheckNationality()", id = "CitizenID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="NationanityDetails">
+                                <label for="inputCitizen" class="col-sm-2 control-label">If No, Nationality<span class="required"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkNationalityID, new SelectList(ViewBag.Country, "CountryID", "CountryName", item.fkNationalityID, "---Select Language....---"), new { @class = "form-control", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="WorkPermit">
+                                <label for="inputWorkPermit" class="col-sm-2 control-label">Valid Work Permit<span class="required"></span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkWorkPermitID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.fkWorkPermitID, "---Select....---"), new { @class = "form-control", onchange = "CheckWorkPermit()", id = "WorkPermitID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <div class="form-group" id="WorkPermitNo">
+                                <label for="inputCriminalOffense" class="col-sm-2 control-label">Permit Number</label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.WorkPermitNo, null, new { @id = "WorkPermitNo", @class = "form-control", placeholder = "Work Permit Number", value = "", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputCriminalOffense" class="col-sm-2 control-label">Criminal Offence<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.pkCriminalOffenseID, new SelectList(ViewBag.YesorNo, "AnswerID", "Answer", item.pkCriminalOffenseID, "---Select....---"), new { @class = "form-control", id = "CriminalOffenseID", required = "required", value = "" })
+                                </div>
+                              </div>
+                              <hr>
+                              <div class="form-group">
+                                <label for="inputLanguageForCorrespondence" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Preferred language for correspondence<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.fkLanguageForCorrespondenceID, new SelectList(ViewBag.LanguageCorr, "LanguageID", "LanguageName", item.fkLanguageForCorrespondenceID, "---Select Language....---"), new { @class = "form-control", id = "LanguageForCorrespondenceID", required = "required", value = "", @readonly = "readonly" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputTelNoDuringWorkingHours" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Telephone no during working hours<span class="required red" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.TextBoxFor(i => item.TelNoDuringWorkingHours, null, new { @maxLength = "10", @id = "TelNoDuringWorkingHours", required = "required", @class = "form-control", placeholder = "Enter Telephone No During Working Hours", value = "", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label for="inputWayForCorrespondance" class="col-sm-2 control-label">&nbsp;</label>
+                                <label>&nbsp;&nbsp; Preferred way of correspondence<span class="required" style="color:red;"> * </span></label>
+                                <div class="col-sm-10">
+                                  @Html.DropDownListFor(m => item.MethodOfCommunicationID, new SelectList(ViewBag.CommunicationMethod, "MethodID", "MethodName", item.MethodOfCommunicationID, "--Select Method of Communication--"), new { @class = "form-control", required = "required" })
+                                </div>
+                              </div>
+                              @*<div class="form-group">
+                          <label for="inputCorrespondanceDetails" class="col-sm-2 control-label">&nbsp;</label>
+                          <label>&nbsp;&nbsp; Correspondence Details<span class="required" style="color:red;"> * </span></label>
+                          <div class="col-sm-10">
+                              @Html.TextBoxFor(i => item.CorrespondanceDetails, null, new { @id = "CorrespondanceDetails", @class = "form-control", placeholder = "Enter Correspondence Details", required = "required", value = "" })
+                          </div>
+                      </div>*@
+                              <hr>
+
+                              @*<span style="color:red;">@ViewBag.Note</span>*@
+                              <br>
+                              <br />
+                              @*<div class="form-group">
+                                <span class="required" style="color:red;"> PDF / Word </span>
+                                <label for="inputCVUpload" class="col-sm-2 control-label">Upload CV</label>
+                                <div class="col-sm-10">
+                                  <input class="input-file uniform_on" id="postedCV" name="postedCV" type="file" disabled="disabled">
+                                </div>
+                              </div>*@
+                              @*<div class="form-group">
+                                <span class="required" style="color:red;"> PDF </span>
+                                <label for="inputIDUpload" class="col-sm-2 control-label">ID Document</label>
+                                <div class="col-sm-10">
+                                  <input class="input-file uniform_on" id="postedID" name="postedID" type="file">
+                                </div>
+                              </div>*@
+                                  {
+                                      var terms = _db.tblProfiles.Where(x => x.UserID == userid).FirstOrDefault();
+                                      bool t = Convert.ToBoolean(terms.TermsAndConditions);
+
+                                      if (t != Convert.ToBoolean(1))
+                                      {
+                                  <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                      <div class="checkbox">
+                                        <label>
+                                          <input type="checkbox" name="TermsAndConditions" id="TermsAndConditions"> I agree to the <a href="#" data-toggle="modal" data-target="#myTerms">terms and conditions</a>
+                                        </label>
+                                        @*<label>
+                                    @Html.CheckBoxFor(m => item.TermsAndConditions, new { htmlAttributes = new { @class = "form-control", @type = "checkbox", @required = "required", tabindex = 23, @onchange="GetTermsAndConditions()" } })
+                                    <span class="lbl"> I agree to the <a href="#">terms and conditions</a></span>
+                                </label>*@
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                      <button type="button" id="btnPersonalInfo" class="btn btn-primary" disabled value="Submit">Save</button>
+                                    </div>
+                                  </div>
+                                      }
+                                      else
+                                      {
+                                  <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                      <button type="button" id="btnPersonalInfo" class="btn btn-primary" value="Submit">Save</button>
+                                    </div>
+                                  </div>
+                                      }
+                                  }
+
+
+
+                              }
+
+                          }
+                          <!-- /.post -->
+                          <!-- Post -->
+                          <!-- /.post -->
+                          <!-- Post -->
+                          <!-- /.post -->
+
+                        </div>
+
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="education">
+                          <div ng-switch="EducationCRUDMode">
+                            <div ng-switch-when="Add">
+                              <!-- Form Element sizes -->
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Add Education Information</h3>
+                                </div>
+
+                                <div class="box-body">
+                                  Institution Name:<span style="color:red;"> * </span>
+                                  <input type="text" ng-model="institutionName" required class="form-control" id="institutionName" name="institutionName" />
+                                  <br>Qualification Name:<span style="color:red;"> * </span>
+                                  <input type="text" ng-model="qualificationName" required class="form-control" id="qualificationName" name="qualificationName" />
+                                  <br>Qualification Type:<span style="color:red;"> * </span>
+                                  <select name="QualificationTypeName" id="QualificationTypeName" required class="form-control"
+                                          ng-model="QualificationTypeName">
+                                    <option ng-repeat="b in QualificationTypeList " value="{{b.QualificationTypeID}}">{{b.QualificationTypeName}}</option>
+                                    <option value="" selected>-- Please Select --</option>
+                                  </select>
+                                  <br>Certificate Number:
+                                  <input type="text" ng-model="certificateNumber" required class="form-control" id="certificateNumber" name="certificateNumber" />
+                                  <br>
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <br />
+                                      Qualification Start Date:<span style="color:red;"> * </span>
+                                      <input ng-model="startDate" required class="input-group date form-control" data-provide="datepicker" type="text" id="startDate" name="startDate" readonly="readonly" />
+                                    </div>
+                                    <div class="col-md-6">
+                                      <br>Qualification End Date:<span style="color:red;"> * </span>
+                                      <input ng-model="endDate" required class="input-group date form-control" data-provide="datepicker" type="text" id="endDate" name="endDate" readonly="readonly" />
+                                    </div>
+                                  </div>
+
+
+                                  <br />
+                                  <button type="button" class="btn btn-success" ng-click="AddEducationInfo()"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateEducationData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                                <!-- /.box-body -->
+                              </div>
+                              <!-- /.box -->
+                            </div>
+                            <div ng-switch-when="Load">
+
+                              @*@{ if (@TempData["Message"] != null)
+                          {
+                              <div class="alert alert-success alert-dismissible" id="MyWorkflow">
+                                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                  <h4><i class="icon fa fa-check"></i> Message!</h4>
+                                  Application successfully sent.
+                              </div>
+                          }
+                      }*@
+                              <button id="Add" name="Add" class="btn btn-success" ng-click="AddEducation()"><span class="fa fa-plus"></span> Add New Education History</button><br />
+                              <br />
+                              <table id="example12" class="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Institution</th>
+                                    <th>Qualification</th>
+                                    <th>Qualification Type</th>
+                                    <th>Certificate#</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @*<pre>
+                              {{EducationListData | json}}
+                          </pre>*@
+                                  <tr data-ng-repeat="d in EducationListData">
+                                    <td>{{d.institutionName}}</td>
+                                    <td>{{d.qualificationName}}</td>
+                                    <td>{{d.QualificationTypeName}}</td>
+                                    <td>{{d.certificateNumber}}</td>
+                                    <td>{{d.startDate}}</td>
+                                    <td>{{d.endDate}}</td>
+                                    <td>
+                                      <div class="btn-group">
+                                        @*<button type="button" class="btn btn-success"></button>*@
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                          <span class="caret"></span>
+                                          <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                          <li><a href="#" class="elements" ng-click="GetCandidateEducationForEdit(d.qualificationID)"><span class="fa fa-pencil" style="color:blue;"></span> Edit</a></li>
+                                          <li><a href="#" class="elements" ng-click="DeleteCandidateEducation(d.qualificationID)"><span class="fa fa-trash danger" style="color:red;"></span> Delete</a></li>
+                                        </ul>
+                                      </div>
+                                      @*<button type="submit" class="btn btn-success" ng-click="GetApplicantInfoByID(id.ID)">Edit Data</button>*@
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <div ng-switch-when="Edit">
+                              <!-- Form Element sizes -->
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Edit Education</h3>
+                                </div>
+                                <div class="box-body">
+                                  Institution Name:
+                                  <input type="text" ng-model="EducationDataForEdit[0].institutionName" required class="form-control" id="institutionNameEdit" name="institutionNameEdit" />
+                                  <br>Qualification Name:
+                                  <input type="text" ng-model="EducationDataForEdit[0].qualificationName" required class="form-control" id="qualificationNameEdit" name="qualificationNameEdit" />
+                                  <br>Qualification Type:
+                                  <select name="QualificationTypeNameEdit" id="QualificationTypeNameEdit" class="form-control"
+                                          ng-model="EducationDataForEdit[0].QualificationTypeName">
+                                    <option ng-repeat="b in QualificationTypeList " value="{{b.QualificationTypeID}}">{{b.QualificationTypeName}}</option>
+                                    <option value="" selected>-- Please Select --</option>
+                                  </select>
+                                  <br>Certificate Number:
+                                  <input type="text" ng-model="EducationDataForEdit[0].certificateNumber" class="form-control" id="certificateNumberEdit" name="certificateNumberEdit" />
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <br />
+                                      <div class="form-group">
+                                        <label for="startDate" class="control-label">Qualification Start Date:</label>
+                                        <div class="control">
+                                          <input id="startDateEdit" name="startDateEdit" class="input-group date form-control" data-provide="datepicker" type="text" ng-model="startDate" readonly="readonly">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <br />
+                                      <div class="form-group">
+                                        <label for="endDate" class="control-label">Qualification End date:</label>
+                                        <div class="control">
+                                          <input id="endDateEdit" name="endDateEdit" class="input-group date form-control" data-provide="datepicker" type="text" ng-model="endDate" readonly="readonly">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <br />
+                                  <button type="button" class="btn btn-success" ng-click="UpdateEducation(EducationDataForEdit[0].qualificationID)"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateEducationData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                                <!-- /.box-body -->
+                              </div>
+                              <!-- /.box -->
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="workhistory">
+                            <div ng-switch="WorkHistoryCRUDMode">
+                                <div ng-switch-when="Add">
+                                    <!-- Form Element sizes -->
+                                    <div class="box box-success">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title">Add Work History</h3>
+                                        </div>
+                                        <div class="box-body">
+                                            Company Name:<span style="color:red;"> * </span>
+                                            <input type="text" ng-model="companyName" required class="form-control" id="companyName" name="companyName" />
+                                            <br>Job Title:<span style="color:red;"> * </span>
+                                            <input type="text" ng-model="jobTitle" required class="form-control" id="jobTitle" name="jobTitle" />
+                                            <br>Duties:
+                                            @*<input type="text" ng-model="positionHeld" class="form-control" id="positionHeld" name="positionHeld" />*@
+                                            <textarea ng-model="positionHeld" class="form-control" id="positionHeld" name="positionHeld"></textarea>
+                                            <br>Department or Unit  Name:
+                                            <input type="text" ng-model="department" required class="form-control" id="department" name="department" />
+                                            <div ng-class="{'hidden': hasCurrentWork}">
+                                                <br>Current Job:
+                                                <input ng-model="current" type="checkbox" id="current" name="endDateQual" />
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <br />
+                                                    Start Date:<span style="color:red;"> * </span>
+                                                    <input ng-model="startDateQual" required class="input-group date form-control" data-provide="datepicker" type="text" id="startDateQual" name="startDateQual" readonly="readonly" />
+
+                                                </div>
+                                                <div class="col-md-6" ng-if="!current">
+                                                    <br>End Date:
+                                                    <input ng-model="endDateQual" required class="input-group date form-control" data-provide="datepicker" type="text" id="endDateQual" name="endDateQual" value="" readonly="readonly" />
+                                                </div>
+                                            </div><br />
+                                            <div ng-if="!current">
+                                                Reason for Leaving Employment:@*<span style="color:red;"> * </span>*@
+                                                <input type="text" ng-model="reasonForLeaving" class="form-control" id="reasonForLeaving" name="reasonForLeaving" /><br>
+                                            </div>
+                                            @*<div class="row">
+                        <div class="col-md-6">
+                            <br />
+                            Were You Previously Employed In The Public Service?:<span style="color:red;"> * </span>
+                            <select class="form-control" ng-model="previouslyEmployedPS" id="previouslyEmployedPS" name="previouslyEmployedPS">
+                                <option value="0" ng-selected>--Select--</option>
+                                <option value="1">Yes</option>
+                                <option value="2">No</option>
+                            </select>
+
+                        </div>
+                    </div><br />*@
+                                            @*<div class="showReEmp" ng-if="previouslyEmployedPS == 1">
+
+                        Indicate Whether Any Conditions Exist That Prevents Your Re-Employment:<span style="color:red;"> * </span>
+                        <input type="text" ng-model="reEmployment" required class="form-control" id="reEmployment" name="reEmployment" /><br>
+                        Provide The Name Of The Previous Employing Department:<span style="color:red;"> * </span>
+                        <input type="text" ng-model="previouslyEmployedDepartment" required class="form-control" id="previouslyEmployedDepartment" name="previouslyEmployedDepartment" /><br>
+                    </div>*@
+
+
+                                            <button type="button" class="btn btn-success" ng-click="AddWorkHistoryInfo()"> <span class="fa fa-save success"></span> Save</button>
+                                            <button type="button" class="btn btn-danger" ng-click="GetCandidateWorkHistoryData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                        </div>
+                                        <!-- /.box-body -->
+                                    </div>
+                                    <!-- /.box -->
+                                </div>
+                                <div ng-switch-when="Load">
+                                    <button id="Add" name="Add" class="btn btn-success" ng-click="AddWorkHistory()"><span class="fa fa-plus"></span> Add New Work History</button><br />
+                                    <br />
+
+
+                                    <table id="example9" class="table table-bordered table-striped" data-orderable>
+                                        <thead>
+                                            <tr>
+                                                <th>Company Name</th>
+                                                <th>Job Title</th>
+                                                @*<th>Duties</th>*@
+                                                <th>Department or Unit</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Reason For Leaving</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr data-ng-repeat="d in WorkHistoryListData">
+                                                <td>{{d.companyName}}</td>
+                                                <td>{{d.jobTitle}}</td>
+                                                @*<td>{{d.positionHeld}}</td>*@
+                                                <td>{{d.department}}</td>
+                                                <td>{{d.startDate}}</td>
+                                                <td>{{d.endDate == '0001/01/01' || d.endDate == '0001-01-01' || d.endDate == '1/1/0001' || d.endDate == '01/01/0001'? 'current' : d.endDate}}</td>
+                                                <td>{{d.reasonForLeaving}}</td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        @*<button type="button" class="btn btn-success"></button>*@
+                                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                                            <span class="caret"></span>
+                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                        </button>
+                                                        <ul class="dropdown-menu" role="menu">
+                                                            <li><a href="#" class="elements" ng-click="GetCandidateWorkHistoryForEdit(d.workHistoryID)"><span class="fa fa-pencil" style="color:blue;"></span> Edit</a></li>
+                                                            <li><a href="#" class="elements" ng-click="DeleteCandidateWorkHistory(d.workHistoryID);GetCandidateWorkHistoryData()"><span class="fa fa-trash danger" style="color:red;"></span> Delete</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    @*<button type="submit" class="btn btn-success" ng-click="GetApplicantInfoByID(id.ID)">Edit Data</button>*@
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                             
+                                <div ng-switch-when="Edit">
+                                    @*<pre>
+            {{WorkHistoryDataForEdit | json}}
+        </pre>*@
+                                    <!-- Form Element sizes -->
+                                    <div class="box box-success">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title">Edit Work History</h3>
+                                        </div>
+                                        <div class="box-body">
+                                            Company Name:
+                                            <input type="text" ng-model="WorkHistoryDataForEdit[0].companyName" required class="form-control" id="companyNameEdit" name="companyNameEdit" />
+                                            <br>Job Title:
+                                            <input type="text" ng-model="WorkHistoryDataForEdit[0].jobTitle" required class="form-control" id="jobTitleEdit" name="jobTitleEdit" />
+                                            <br>Duties:
+                                            @*<input type="text" ng-model="WorkHistoryDataForEdit[0].positionHeld" required class="form-control" id="positionHeldEdit" name="positionHeldEdit" />*@
+                                        <textarea ng-model="WorkHistoryDataForEdit[0].positionHeld" class="form-control" id="positionHeldEdit" name="positionHeldEdit"></textarea>
+                                            <br>Department or Unit Name:
+                                            <input type="text" ng-model="WorkHistoryDataForEdit[0].department" required class="form-control" id="departmentEdit" name="departmentEdit" />
+                                            <div ng-class="{'hidden': !showCurrent}">
+                                                <br>Current Job:
+                                                <input ng-model="current" type="checkbox" id="current" name="endDateQual" />
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <br />
+                                                    <div class="form-group">
+                                                        <label for="startDate" class="control-label">Start Date:</label>
+                                                        <div class="control">
+                                                            <input id="startDateEdit" name="startDateEdit" class="input-group date form-control" data-provide="datepicker" type="text" ng-model="startDate" readonly="readonly">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <br />
+                                                    <div class="form-group" ng-if="!current">
+                                                        <label for="endDate" class="control-label">End date:</label>
+                                                        <div class="control">
+                                                            <input id="endDateEdit" name="endDateEdit" class="input-group date form-control" data-provide="datepicker" type="text" ng-model="endDate" readonly="readonly">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="form-group" ng-if="!current">
+                                                Reason For Leaving Your Previous Employment:
+                                                <input type="text" ng-model="WorkHistoryDataForEdit[0].reasonForLeaving" required class="form-control" id="reasonForLeavingEdit" name="reasonForLeavingEdit" />
+                                                <br>
+                                            </div>
+                                            @*<div class="row">
+                    <div class="col-md-6">
+                        <br />
+                        Were You Previously Employed In The Public Service?:
+                        <select class="form-control" ng-model="WorkHistoryDataForEdit[0].previouslyEmployedPS" id="previouslyEmployedPSEdit" name="previouslyEmployedPSEdit">
+                            <option value="0">--Select--</option>
+                            <option value="1" ng-selected="data[0].previouslyEmployedPS == 1">Yes</option>
+                            <option value="2" ng-selected="data[0].previouslyEmployedPS == 2">No</option>
+                        </select>
+                    </div>
+                </div><br />*@
+                                            @*<div class="showReEmp" ng-if="WorkHistoryDataForEdit[0].previouslyEmployedPS == 1">
+
+
+                    Indicate Whether Any Conditions Exist That Prevents Your Re-Employment:
+                    <input type="text" ng-model="WorkHistoryDataForEdit[0].reEmployment" required class="form-control" id="reEmploymentEdit" name="reEmploymentEdit" />
+                    <br>
+                    Provide The Name Of The Previous Employing Department:
+                    <input type="text" ng-model="WorkHistoryDataForEdit[0].previouslyEmployedDepartment" required class="form-control" id="previouslyEmployedDepartmentEdit" name="previouslyEmployedDepartmentEdit" />
+                    <br>
+                </div>*@
+                                            <button type="button" class="btn btn-success" ng-click="UpdateWorkHistoryInfo(WorkHistoryDataForEdit[0].workHistoryID)"> <span class="fa fa-save success"></span> Save</button>
+                                            <button type="button" class="btn btn-danger" ng-click="GetCandidateWorkHistoryData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                        </div>
+                                        <!-- /.box-body -->
+                                    </div>
+                                    <!-- /.box -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="skills">
+                          <div ng-switch="SkillsCRUDMode">
+                            <div ng-switch-when="Add">
+                              <!-- Form Element sizes -->
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Add Skills Information</h3>
+                                </div>
+
+                                <div class="box-body">
+                                  Skill Name:<span style="color:red;"> * </span>
+                                  <select name="skillID" id="skillID" required class="form-control"
+                                          ng-model="skillID">
+                                    <option ng-repeat="b in SkillsTypeList " value="{{b.skillID}}">{{b.skillName}}</option>
+                                    <option value="" selected>-- Please Select --</option>
+                                  </select>
+
+                                  <br>Skill Proficiency:<span style="color:red;"> * </span>
+                                  <select name="SkillProficiencyID" id="SkillProficiencyID" required class="form-control"
+                                          ng-model="SkillProficiencyID">
+                                    <option ng-repeat="b in SkillProficiencyList " value="{{b.SkillProficiencyID}}">{{b.SkillProficiency}}</option>
+                                    <option value="" selected>-- Please Select --</option>
+                                  </select>
+                                  <br />
+                                  <button type="button" class="btn btn-success" ng-click="AddSkillsInfo()"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateSkillsData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                                <!-- /.box-body -->
+                              </div>
+                              <!-- /.box -->
+                            </div>
+                            <div ng-switch-when="Load">
+                              <button id="Add" name="Add" class="btn btn-success" ng-click="AddSkills()"><span class="fa fa-plus"></span> Add New Skill</button><br />
+                              <br />
+                              <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Skill Name</th>
+                                    <th>Skill Proficiency</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr data-ng-repeat="d in SkillsListData">
+                                    <td>{{d.skillName}}</td>
+                                    <td>{{d.SkillProficiency}}</td>
+                                    <td>
+                                      <div class="btn-group">
+                                        @*<button type="button" class="btn btn-success"></button>*@
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                          <span class="caret"></span>
+                                          <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                          @*<li><a href="#" class="elements" ng-click="GetCandidateWorkHistoryForEdit(d.workHistoryID)"><span class="fa fa-pencil" style="color:blue;"></span> Edit</a></li>*@
+                                          <li><a href="#" class="elements" ng-click="DeleteSkillsByID(d.skillsProfileID);GetCandidateSkillsData()"><span class="fa fa-trash danger" style="color:red;"></span> Delete</a></li>
+                                        </ul>
+                                      </div>
+                                      @*<button type="submit" class="btn btn-success" ng-click="GetApplicantInfoByID(id.ID)">Edit Data</button>*@
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="languages">
+                          <div ng-switch="LanguagesCRUDMode">
+                            <div ng-switch-when="Add">
+                              <!-- Form Element sizes -->
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Add Languages</h3>
+                                </div>
+
+                                <div class="box-body">
+                                  Language Name:<span style="color:red;"> * </span>
+                                  <select name="LanguageID" id="LanguageID" required class="form-control"
+                                          ng-model="LanguageID">
+                                    <option ng-repeat="b in LanguagesTypeList " value="{{b.LanguageID}}">{{b.LanguageName}}</option>
+                                    <option value="" selected>-- Please Select --</option>
+                                  </select>
+
+                                  <br>Language Proficiency:<span style="color:red;"> * </span>
+                                  <select name="LanguageProficiencyID" id="LanguageProficiencyID" required class="form-control"
+                                          ng-model="LanguageProficiencyID">
+                                    <option ng-repeat="b in LanguagesProficiencyList " value="{{b.LanguageProficiencyID}}">{{b.LanguageProficiency}}</option>
+                                    <option value="" selected>-- Please Select --</option>
+                                  </select>
+                                  <br />
+                                  <button type="button" class="btn btn-success" ng-click="AddLanguagesInfo()"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateLanguagesData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                                <!-- /.box-body -->
+                              </div>
+                              <!-- /.box -->
+                            </div>
+                            <div ng-switch-when="Load">
+                              <button id="Add" name="Add" class="btn btn-success" ng-click="AddLanguages()"><span class="fa fa-plus"></span> Add New Language</button><br />
+                              <br />
+                              <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Language Name</th>
+                                    <th>Proficiency</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr data-ng-repeat="d in LanguagesListData">
+                                    <td>{{d.LanguageName}}</td>
+                                    <td>{{d.LanguageProficiency}}</td>
+
+                                    <td>
+                                      <div class="btn-group">
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                          <span class="caret"></span>
+                                          <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                          <li><a href="#" class="elements" ng-click="DeleteLanguageByID(d.profileLanguageID)"><span class="fa fa-trash danger" style="color:red;"></span> Delete</a></li>
+                                        </ul>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="references">
+                          <div ng-switch="ReferenceCRUDMode">
+                            <div ng-switch-when="Add">
+                              <!-- Form Element sizes -->
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Add Reference Information</h3>
+                                </div>
+
+                                <div class="box-body">
+                                  Full Name:<span style="color:red;"> * </span>
+                                  <input type="text" ng-model="refName" required class="form-control" id="txtrefName" name="txtrefName" />
+                                  <br>Company Name:<span style="color:red;"> * </span>
+                                  <input type="text" ng-model="companyName" required class="form-control" id="txtcompanyName" name="txtcompanyName" />
+                                  <br>Position Held:
+                                  <input type="text" ng-model="positionHeld" required class="form-control" id="txtpositionHeld" name="txtpositionHeld" />
+                                  <br>Telephone Number:<span style="color:red;"> * </span>
+                                  <input type="text" ng-model="telNo" required class="form-control SAIDNumber" id="txttelNo" name="txttelNo" maxLength="10" />
+                                  <br>Email Address:
+                                  <input type="email" ng-model="emailAddress" class="form-control" id="txtemailAddress" name="txtemailAddress" required="required" type="email" />
+                                  <br />
+                                  <button type="button" class="btn btn-success" ng-click="AddReferenceInfo()"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateReferenceData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                                <!-- /.box-body -->
+                              </div>
+                              <!-- /.box -->
+                            </div>
+                            <div ng-switch-when="Load">
+                              <button id="Add" name="Add" class="btn btn-success" ng-click="AddReference()"><span class="fa fa-plus"></span> Add New Reference</button><br />
+                              <br />
+                              <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Full Name</th>
+                                    <th>Company Name</th>
+                                    <th>Position Held</th>
+                                    <th>Tel No</th>
+                                    <th>Email Address</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr data-ng-repeat="d in ReferenceListData">
+                                    <td>{{d.refName}}</td>
+                                    <td>{{d.companyName}}</td>
+                                    <td>{{d.positionHeld}}</td>
+                                    <td>{{d.telNo}}</td>
+                                    <td>{{d.emailAddress}}</td>
+                                    <td>
+                                      <div class="btn-group">
+                                        @*<button type="button" class="btn btn-success"></button>*@
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                          <span class="caret"></span>
+                                          <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                          <li><a href="#" class="elements" ng-click="GetCandidateReferenceForEdit(d.referrenceID)"><span class="fa fa-pencil" style="color:blue;"></span> Edit</a></li>
+                                          <li><a href="#" class="elements" ng-click="DeleteCandidateReference(d.referrenceID)"><span class="fa fa-trash danger" style="color:red;"></span> Delete</a></li>
+                                          @*<li>
+                                      <a href="@Url.Action("Delete", "Admin")" onclick="return confirm('Are you sure you want to delete this record?')"><span class="fa fa-trash danger" style="color:red"></span> Delete</a>
+                                  </li>*@
+                                        </ul>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <div ng-switch-when="Edit">
+                              <!-- Form Element sizes -->
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Edit Reference Information</h3>
+                                </div>
+
+                                <div class="box-body">
+                                  Full Name:
+                                  <input type="text" ng-model="ReferenceDataForEdit[0].refName" required class="form-control" id="txtrefName" name="txtrefName" />
+                                  <br>Company Name:
+                                  <input type="text" ng-model="ReferenceDataForEdit[0].companyName" required class="form-control" id="txtcompanyName" name="txtcompanyName" />
+                                  <br>Position Held:
+                                  <input type="text" ng-model="ReferenceDataForEdit[0].positionHeld" required class="form-control" id="txtpositionHeld" name="txtpositionHeld" />
+                                  <br>Telephone Number:
+                                  <input type="text" ng-model="ReferenceDataForEdit[0].telNo" required class="form-control " id="txttelNo" name="txttelNo" />
+                                  <br>Email Address:
+                                  <input type="email" ng-model="ReferenceDataForEdit[0].emailAddress" class="form-control" id="txtemailAddress" name="txtemailAddress" />
+                                  <br />
+                                  <button type="button" class="btn btn-success" ng-click="UpdateReferenceInfo(ReferenceDataForEdit[0].referrenceID)"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateReferenceData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                                <!-- /.box-body -->
+                              </div>
+                              <!-- /.box -->
+
+                            </div>
+                          </div>
+
+                        </div>
+                        <!-- /.tab-pane -->
+                        <!-- /.tab-pane -->
+                        <div class="tab-pane" id="attachments">
+                          <div ng-switch="AttachmentCRUDMode">
+                            <div ng-switch-when="Load">
+                              <div class="col-md-12">
+                                <div class="box box-default">
+                                  <!-- /.box-header -->
+                                  <div class="box-body">
+                                    <div class="callout callout-warning">
+                                      <h4>Note!</h4>
+                                      <p>Attachments cannot be modified or deleted here, to modify the uploaded please go to Personal Information Tab and upload new one.</p>
+                                    </div>
+                                  </div>
+                                  <!-- /.box-body -->
+                                </div>
+                                <!-- /.box -->
+                              </div>
+                              <br />
+                              <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>File Name</th>
+                                    @*<th>File Type</th>*@
+                                    @*<th>Modified On</th>*@
+                                    @*<th>Download</th>*@
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr data-ng-repeat="d in AttachmentListData">
+                                    <td>@*<a href=@Url.Action("DownLoadFile", "Candidate")*@{{d.fileName}}@*></a>*@</td>
+                                    @*<td>{{d.contentType}}</td>*@
+                                    @*<td>{{d.createdon |  date:'yyyy-MM-dd'}}</td>*@
+                                    @*<td>*@
+                                    @*<a class="btn btn-xs btn-success btn-xs" href='@Url.Action("DownLoadFile", "Candidate", new { id = d.fileName} )' data-toggle="tooltip" data-placement="left" title="Download file">
+                                <i class="ace-icon fa fa-download bigger-120"> Download</i>
+                            </a>*@
+                                    @*</td>*@
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <div ng-switch-when="Add">
+                              <div class="box box-success">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Add Attachment</h3>
+                                </div>
+
+                                <div class="box-body">
+                                  Attachment Name:<br />
+                                  <input type="text" required class="form-control" id="attachmentName" name="attachmentName" />
+                                  <br>Attachment:
+                                  <input type="file" required class="form-control" id="postedFile" name="postedFile" />
+                                  <br />
+                                  <button type="submit" class="btn btn-success"> <span class="fa fa-save success"></span> Save</button>
+                                  <button type="button" class="btn btn-danger" ng-click="GetCandidateAttachmentData()"><span class="fa fa-close danger"></span> Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- /.tab-pane -->
+                      </div>
+                      <!-- /.tab-content -->
+                    </div>
+                    <!-- /.nav-tabs-custom -->
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+              </section>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+              &nbsp;
+              @*SITA*@
+            </div>
+            <!-- /.box-footer-->
+          </div>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Race*@
+        <div class="modal fade" id="myModalRace" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Race</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Date of Birth*@
+        <div class="modal fade" id="myModalBirthDate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Date of Birth</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Terms and condition*@
+        <div class="modal fade" id="myTerms" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Terms and Conditions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>A.	By submitting your application electronically on e-recruitment, you are declaring that the information you are furnishing is factually correct. Should any of the information provided in the application be found to be false or inaccurate, Employer reserves the right to withdraw any offer of employment or if you have commenced employment, to terminate your employment.</p>
+                        <p>B.	It is compulsory to complete all mandatory sections of the profile/online CV.</p>
+                        <p>C.	By submitting your application electronically on e-recruitment, you are granting Employer permission to request (in order to verify authenticity), original and copies of your academic transcripts and certificates of any other qualifications listed on your application, proof of identity and any other documentation as required in the job description of the vacancies you are applying for.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Gender*@
+        <div class="modal fade" id="myModalGender" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Gender</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*dob*@
+        <div class="modal fade" id="myModalDOB" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a valid Date of Birth</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Province*@
+        <div class="modal fade" id="myModalProvince" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Province</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*TelNoDuringWorkingHours Model*@
+        <div class="modal fade" id="myModalTelNoDuring" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Telephone Number for During Working Hours</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Disability Model*@
+        <div class="modal fade" id="myModalDisability" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Disability</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Professionally Registered Model*@
+        <div class="modal fade" id="myModalProfessionallyRegistered" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Professionally Registered</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Were you previously employed in the Public Service*@
+        <div class="modal fade" id="myModalPreviouslyEmployedPS" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select previously employed in the Public Service</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*RSA Citizen Model*@
+        <div class="modal fade" id="myModalSACitizen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select RSA Citizen</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*RSA Criminal Offense Model*@
+        <div class="modal fade" id="myModalCriminalOffense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Criminal Offense</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Preferred Language For Correspondence Model*@
+        <div class="modal fade" id="myModalLanguageForCorrespondenceID" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Preferred Language For Correspondence</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Preferred Language For Correspondence Model*@
+        <div class="modal fade" id="myModalLanguageForCorrespondenceID" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select Preferred Language For Correspondence</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*TelNoDuringWorkingHours Model*@
+        <div class="modal fade" id="myModalTelNoDuringWorkingHours" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Enter Telephone No During Working Hours </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*CityError Model*@
+        <div class="modal fade" id="myModalCity" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a City</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*CityError Model*@
+        <div class="modal fade" id="myModalCity" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a City</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Province Model*@
+        <div class="modal fade" id="fkProvinceIDModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a Province</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*PostalCode Model*@
+        <div class="modal fade" id="postalCodeModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a Postal Code</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Disability Model*@
+        <div class="modal fade" id="disabilityModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a Postal Code</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Driver's License*@
+        <div class="modal fade" id="myModalDriversLicense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select one of the options in "Do you have valid driver's License?"</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Completed Matric*@
+        <div class="modal fade" id="myModalCompletedMatric" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please Select one of the options in "Have you completed matric or equivalent?"</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        @*Correspondence Model*@
+        <div class="modal fade" id="CorrespondenceModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter a Preferred Way Of Correspondence</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <div class="modal fade" id="modal-default">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Upload Profile Picture</h4>
+                    </div>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("UpdateProfile", "Candidate", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", role = "form" }))
+                        {
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-4"></div>
+                                    <div class="col-md-6">
+                                        <label style="color:red">NB: Only images are will be uploaded</label>
+                                        <input class="input-file uniform_on" id="postedFile" accept="image/gif, image/jpeg" name="postedFile" type="file">
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary"><span class="fa fa-save"></span> Upload</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!-- /.box -->
+
+        @if (TempData["message"] != null)
+        {
+            <div class="modal modal-success fade" id="mask" data-toggle="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Notification</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <p>@Html.Raw(Json.Encode(TempData["message"]).Replace(@"""", ""))</p>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" href="@Url.Action("AllUsers", "Admin")" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        }
+    </section>
+
+
+</body>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+
+    $(document).ready(function () {
+        $('#mask').fadeIn(500);
+        $('#mask').fadeTo("slow", 0.9);
+        $('.window .close').click(function (e) {
+            e.preventDefault();
+            $('#mask').hide();
+            $('.window').hide();
+        });
+        $('#mask').click(function () {
+            $(this).hide();
+            $('.window').hide();
+        });
+    });
+
+</script>
+
+<script>
+    function CheckDisability() {
+        var d = $("#AnswerID").val();
+        //alert($("#AnswerID").val());
+        if (d == 1) {
+            $("#DisabilityDetails").show();
+        }
+        else {
+            $("#DisabilityDetails").hide();
+            $("#OtherNatureOfDisability").hide();
+        }
+    }
+
+    function CheckAnyconditionsPreventing()
+    {
+        var d = $("#ConditionsThatPreventsReEmploymentID").val();
+        if (d == 1) {
+            $("#ReEmployment").show();
+        }
+        else {
+            $("#ReEmployment").hide();
+        }
+    }
+
+    function CheckProfessionallyRegistered() {
+        var d = $("#ProfessionallyRegisteredID").val();
+        //alert($("#ProfessionallyRegisteredID").val());
+        if (d == 1) {
+            $("#RegistrationDate").show();
+            $("#RegistrationNumber").show();
+            $("#RegistrationBody").show();
+
+            document.getElementById("RegistrationDate").required = true;
+            document.getElementById("RegistrationNumber").required = true;
+            document.getElementById("RegistrationBody").required = true;
+        }
+        else {
+            $("#RegistrationDate").hide();
+            $("#RegistrationNumber").hide();
+            $("#RegistrationBody").hide();
+
+            document.getElementById("RegistrationDate").required = false;
+            document.getElementById("RegistrationNumber").required = false;
+            document.getElementById("RegistrationBody").required = false;
+        }
+    }
+
+    function CheckPreviouslyEmployedPS() {
+        var d = $("#PreviouslyEmployedPSID").val();
+        //alert($("#PreviouslyEmployedPSID").val());
+        if (d == 1) {
+            $("#ReEmployment").show();
+            $("#PreviouslyEmployedDepartment").show();
+
+            document.getElementById("PreviouslyEmployedDepartment").required = true;
+            document.getElementById("ReEmployment").required = true;
+        }
+        else {
+            $("#ReEmployment").hide();
+            $("#PreviouslyEmployedDepartment").hide();
+
+            document.getElementById("ReEmployment").required = false;
+            document.getElementById("PreviouslyEmployedDepartment").required = false;
+
+        }
+    }
+
+    function CheckDisabilityNature() {
+        var d = $("#DisabilityID").val();
+        if (d == 11) {
+            $("#OtherNatureOfDisability").show();
+        }
+        else {
+            $("#OtherNatureOfDisability").hide();
+        }
+    }
+
+    function CheckNationality() {
+        var d = $("#CitizenID").val();
+        if (d == 2) {
+            $("#NationanityDetails").show();
+            $("#WorkPermit").show();
+        }
+        else {
+            $("#NationanityDetails").hide();
+            $("#WorkPermit").hide();
+        }
+    }
+
+    function CheckWorkPermit() {
+        var a = $("#WorkPermitID").val();
+        if (a == 1) {
+            $("#WorkPermitNo").show();
+        }
+        else {
+            $("#WorkPermitNo").hide();
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var body = document.getElementsByTagName('BODY')[0];
+
+        if ((body && body.readyState == 'loaded') || (body && body.readyState == 'complete')) {
+        }
+        CheckDisability();
+        CheckDisabilityNature();
+        CheckNationality();
+        CheckWorkPermit();
+        CheckProfessionallyRegistered();
+        CheckPreviouslyEmployedPS();
+        CheckAnyconditionsPreventing();
+
+        $("#DateOfBirth").datepicker({
+            format: 'dd/mm/yyyy',
+            //maxDate: moment(new Date())
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+        $("#startDate").datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date(),
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+        $("#endDate").datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date(),
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+        $("#startDateEdit").datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date(),
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+        $("#endDateEdit").datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date(),
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+
+        $("#startDateQual").datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date(),
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+        $("#endDateQual").datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date(),
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
+        });
+
+    });
+
+    function SelectedIndexChangedWorkPermit() {
+        $(function () {
+            $("#AnswerID").change(function () {
+                var value = $(this).val();
+
+                //alert(value);
+                if (value == 1) {
+                    $("#WorkPermitNo").show();
+
+                }
+                else {
+
+                    $("#WorkPermitNo").hide();
+
+                }
+            })
+        })
+    }
+    function SelectedIndexChangedDisability() {
+        $(function () {
+            $("#DisabilityID").change(function () {
+                var value = $(this).val();
+
+                //alert(value);
+                if (value == 11) {
+                    $("#OtherNatureOfDisability").show();
+                }
+                else {
+
+                    $("#OtherNatureOfDisability").hide();
+                }
+
+            })
+        })
+    }
+
+    function GetTermsAndConditions() {
+        alert("Anotha");
+        if ($('#TermsAndConditions').is(":checked")) {
+            alert("I am shecked");
+        }
+    }
+
+
+    $('#TermsAndConditions').change(function () {
+        if ($('#TermsAndConditions').is(":checked")) {
+            $(':input[type="button"]').prop('disabled', false);
+        } else { $(':input[type="button"]').prop('disabled', true); }
+    });
+
+    function isNumberKey(evt) {
+        //var e = evt || window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+
+    function ValidateAlpha(evt) {
+        var keyCode = (evt.which) ? evt.which : evt.keyCode
+        if ((keyCode < 65 || keyCode > 90) && (keyCode < 97 || keyCode > 123) && keyCode != 32)
+
+            return false;
+        return true;
+    }
+    function GetQualificationID(d) {
+        document.getElementById("hdnQualificationID").value = d;
+        $('hdnQualificationID').val(d);
+        //alert(d);
+    }
+    function GetWorkHistoryID(d) {
+        document.getElementById("hdnWorkHistoryID").value = d;
+        $('hdnWorkHistoryID').val(d);
+        //alert(d);
+    }
+    function GetReferenceID(d) {
+        document.getElementById("hdnReferenceID").value = d;
+        $('hdnReferenceID').val(d);
+        //alert(d);
+    }
+    function myFunction() {
+        $(function () {
+            $('form.my_form').submit(function (event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize()
+                }).done(function (data) {
+                    // Optionally alert the user of success here...
+                }).fail(function (data) {
+                    // Optionally alert the user of an error here...
+                });
+            });
+        });
+    }
+
+    $(function () {
+        var image = $("#imgFileUpload");
+        image.click(function () {
+            $("#Test").show();
+            $("#Test").delay(5000).fadeOut("slow");
+
+        });
+
+    });
+</script>
+<script>
+    $('#btnPersonalInfo').on("click", function (e) {
+        e.preventDefault(); //stop submit
+        var mymodal = $('#myModal');
+
+        var currentDate = new Date(); //use your date here
+        //alert( currentDate.toLocaleDateString('en-US')); // "en-US" gives date in US Format - mm/dd/yy
+        var dobYY = new Date($('#DateOfBirth').val());
+        var dd = String(currentDate.getDate()).padStart(2, '0');
+        var mm = String(currentDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = currentDate.getFullYear();
+        currentDate = mm + '/' + dd + '/' + yyyy;
+        var age = parseInt(yyyy) - parseInt(dobYY.getFullYear());
+      
+        //alert(dobYY.getFullYear() + ' : ' + yyyy);
+        if (age > 60)
+        {
+            mymodal.find('.modal-body').text('You are not allowed to use this functionality, age is above 60!');
+            mymodal.modal('show');
+            return;
+        }
+        if (age < 18)
+        {
+            mymodal.find('.modal-body').text('You are not allowed to use this functionality, age is below 18!');
+            mymodal.modal('show');
+            return;
+        }
+
+        // Date of birth
+        if ($('#DateOfBirth').val() == null || $('#DateOfBirth').val() == '') {
+            //mymodal.find('.modal-body').text('You are not allowed to use this functionality, age is above 60!');
+            //mymodal.modal('show');
+            $('#myModalBirthDate').modal('show');
+            return;
+         }
+
+        if (dobYY > currentDate) {
+            mymodal.find('.modal-body').text('Date of Birth cannot be in the future!');
+            mymodal.modal('show');
+            return;
+         }
+
+        //Race
+        if (document.getElementById("RaceID").value == -1) {
+            mymodal.find('.modal-body').text('Please select Race');
+            mymodal.modal('show');
+            return;
+        }
+
+        //Gender
+        else if (document.getElementById("GenderID").value == -1) {
+            mymodal.find('.modal-body').text('Please select Gender');
+            mymodal.modal('show');
+            return;
+        }
+        //
+        else if ($('#TelNoDuringWorkingHours').val() == null || $('#DateOfBirth').val() == '') {
+            $('#myModalTelNoDuring').modal('show');
+            return;
+        }
+
+        //Province
+        else if (document.getElementById("fkProvinceID").value == -1) {
+            mymodal.find('.modal-body').text('Please select Province');
+            mymodal.modal('show');
+            return;
+        }
+
+        //Disability
+        else if (document.getElementById("AnswerID").value == -1) {
+            $('#myModalDisability').modal('show');
+            return;
+        }
+        //DriversLicense
+        else if (document.getElementById("DriversLicenseID").value == -1) {
+            //alert($("#DriversLicenseID").val());
+            $('#myModalDriversLicense').modal('show');
+            return;
+        }
+        //CompletedMatric
+        else if (document.getElementById("MatricID").value == -1) {
+            //alert($("#MatricID").val());
+            $('#myModalCompletedMatric').modal('show');
+            return;
+        }
+        //ProfessionallyRegistered
+        else if (document.getElementById("ProfessionallyRegisteredID").value == -1) {
+            $('#myModalProfessionallyRegistered').modal('show');
+            return;
+        }
+
+        //PreviouslyEmployedPS
+        else if (document.getElementById("PreviouslyEmployedPSID").value == -1) {
+            //alert($("#PreviouslyEmployedPSID").val());
+            $('#myModalPreviouslyEmployedPS').modal('show');
+            return;
+        }
+
+        //ConditionsThatPreventsReEmploymentID
+        if (document.getElementById("ConditionsThatPreventsReEmploymentID").value == -1) {
+          mymodal.find('.modal-body').text('Are there any conditions that prevents your re-employment?');
+            mymodal.modal('show');
+            return;
+        }
+
+        ////ConditionsThatPreventsReEmploymentID = Yes
+        if (document.getElementById("ConditionsThatPreventsReEmploymentID").value == 1
+            && (document.getElementById("ReEmploy").value == '' || document.getElementById("ReEmploy").value == null))
+        {
+            alert(document.getElementById("ReEmploy").value);
+            mymodal.find('.modal-body').text('Please specify the conditions that exists that prevents your re-employment?');
+            mymodal.modal('show');
+            return;
+
+        //    //ReEmployment
+        //    //var x = $('#ReEmployment').val();
+        //    //var xc = $('#item_ReEmployment').val();
+        //    //alert(x + " : " + xc);
+        //    var dc = document.getElementById("ReEmploy").value;
+        //    alert(dc);
+        //    if (document.getElementById("ReEmploy").value == "")
+        //    {
+        //        mymodal.find('.modal-body').text('Please specify the conditions that exists that prevents your re-employment?');
+        //        mymodal.modal('show');
+        //        return;
+        //    }
+        }
+
+        //Nationality
+        else if (document.getElementById("CitizenID").value == -1) {
+            $('#myModalSACitizen').modal('show');
+            return;
+        }
+
+        //Criminal Offense
+        else if (document.getElementById("CriminalOffenseID").value == -1) {
+            $('#myModalCriminalOffense').modal('show');
+            return;
+        }
+
+        //Preferred Language For Correspondence
+        else if (document.getElementById("LanguageForCorrespondenceID").value == -1) {
+            $('#myModalLanguageForCorrespondenceID').modal('show');
+            return;
+        }
+
+        //TelNoDuringWorkingHours
+        else if (document.getElementById("TelNoDuringWorkingHours").value == -1) {
+            $('#myModalTelNoDuringWorkingHours').modal('show');
+            return;
+        }
+        // City
+        else if ($('#City').val() == null || $('#City').val() == '') {
+            $('#myModalCity').modal('show');
+            return;
+        }
+        //
+        else if ($('#fkProvinceID').val() == null || $('#fkProvinceID').val() == '' || $('#fkProvinceID') == -1) {
+            $('#fkProvinceIDModel').modal('show');
+            return;
+        }
+        else if ($('#postalCode').val() == null || $('#postalCode').val() == '' || $('#postalCode') == -1) {
+            $('#postalCodeModel').modal('show');
+            return;
+        }
+        else if ($('#AnswerID').val() == null || $('#AnswerID').val() == '' || $('#AnswerID') == -1) {
+            $('#disabilityModel').modal('show');
+            return;
+        }
+        else if ($('#item_MethodOfCommunicationID').val() == null || $('#item_MethodOfCommunicationID').val() == '' || $('#item_MethodOfCommunicationID') == -1) {
+            $('#CorrespondenceModel').modal('show');
+            return;
+        }
+        else {
+            document.getElementById("myForm").submit();
+
+        }
+
+    });
+
+    $(function () {
+        $(document).on("submit", "#CreateFundingfrm", function (event) {
+
+            var x = $('#txttelNo').val();
+            //var x = document.form1.txtPhone.value;
+            if (x.charAt(0) != "0") {
+                alert("Contact number should start with 0 ");
+                return false
+            }
+
+
+            var SAID = $(".SAIDNumber"),
+                value = SAID.val();
+            if (!isIDNumber(value)) {
+                event.preventDefault();
+                alert("Please enter 10 contact digits");
+                return;
+            } else {
+                return true;
+            }
+
+            //var SAcontact = $(".SANumber"),
+            //value = SAcontact.val();
+            //if (!SANumber(value)) {
+            //    event.preventDefault();
+            //    alert("Please enter 10 digits");
+            //} else {
+            //    $("#CreateBearerFrm").submit();
+            //}
+        });
+
+    });
+</script>
+

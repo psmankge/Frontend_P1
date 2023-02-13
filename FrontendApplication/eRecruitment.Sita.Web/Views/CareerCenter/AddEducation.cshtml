@@ -1,0 +1,163 @@
+﻿@model eRecruitment.Sita.Web.Models.EducationModel
+
+@{
+    Layout = null;
+
+    AjaxOptions details = new AjaxOptions
+    {
+        //Confirm = "Save these changes?",
+        OnBegin = "OnBeginDetailMethod",
+        OnFailure = "OnFailtureDetailMethod",
+        OnSuccess = "OnSuccessDetailMethod",
+        OnComplete = "OnCompleteDetailMethod"
+    };
+}
+@{
+    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+    eRecruitmentDataAccess _dal = new eRecruitmentDataAccess();
+}
+
+@using (Ajax.BeginForm("AddEducation", "CareerCenter", details))
+{
+    @Html.AntiForgeryToken()
+    <div id="divDetailsStatus"></div>
+    <div class="form-horizontal">
+
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label for="inputCorrespondanceDetails" class="col-sm-2 control-label">Institution<span class="required">*</span></label>
+            <div class="col-sm-10">
+                <input id="InstitutionName" type="text" required="required" placeholder="Enter Institution Name or High School Name" name="institutionName" data-required="1" class="form-control" ng-model="institutionName" onKeyPress="return ValidateAlpha(event);" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputCorrespondanceDetails" class="col-sm-2 control-label">Qualification<span class="required">*</span></label>
+            <div class="col-sm-10">
+                <input id="QualificationName" type="text" required="required" placeholder="Enter Qualification Name" name="qualificationName" data-required="1" class="form-control" ng-model="qualificationName" onKeyPress="return ValidateAlpha(event);" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputCorrespondanceDetails" class="col-sm-2 control-label">Qualification Type<span class="required">*</span></label>
+            <div class="col-sm-10">
+                @Html.DropDownList("QualificationTypeID", new SelectList(ViewBag.QualificationType, "QualificationTypeID", "QualificationTypeName", "--Select Qualification Type--"), new { @class = "form-control", required = "required", value = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputCorrespondanceDetails" class="col-sm-2 control-label">Certificate Number<span class="required">*</span></label>
+            <div class="col-sm-10">
+                <input id="certificateNumber" type="text" required="required" placeholder="Enter Certificate Number" name="certificateNumber" data-required="1" class="form-control" ng-model="certificateNumber" onkeypress="return isNumberKey(event)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="date01">Start Date<span class="required">*</span></label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control datepicker" id="startDate" required="required" name="startDate" ng-model="startDate">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="date01">End Date<span class="required">*</span></label>
+            <div class="col-sm-10">
+                <input type="date" class="form-control datepicker" required="required" id="endDate" name="endDate" ng-model="endDate">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Add" onclick="dateCheck()" class="btn btn-primary" />
+                <input type="button" value="Cancel" class="btn btn-warning" onclick="getAddEduFunc()" />
+            </div>
+        </div>
+
+        
+            <div class="modal modal-warning fade" id="mask" data-toggle="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            @*<h4 class="modal-title">Your Referecre No is</h4>*@
+                        </div>
+                        <div class="modal-body">
+                            @*<p>You have successfully Uploaded the Vacancy Here is Your Reference No: ;</p>*@
+
+                            <p>@Html.Raw(Json.Encode(TempData["message"]))</p>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                            @*<button type="button" class="btn btn-primary">Save changes</button>*@
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        
+
+    </div>
+
+
+}
+<script>
+
+    function getAddEduFunc() {
+        $("#getEduTable").load('@(Url.Action("getEducation", "CareerCenter"))');
+    }
+
+    var isError = false;
+    function OnBeginDetailMethod() {
+        $("#divDetailsStatus").text("Loading ....");
+    }
+
+    function OnFailtureDetailMethod(error) {
+        $("#errormessages").text(error.responseText);
+        $("#divDetailsStatus").text("");
+        isError = true;
+    }
+
+    function OnSuccessDetailMethod(data) {
+        $("#divDetailsStatus").text("Processed the data Successfully!");
+        $("#getEduTable").load('@(Url.Action("getEducation", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        isError = false;
+    }
+
+    function OnCompleteDetailMethod(data, status) {
+        if (!isError) {
+            alert("Status:" + status + " , Data :" + data);
+            //$("#divDetailsStatus").text("Request status: " + status);
+            $("#getEduTable").load('@(Url.Action("getEducation", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        }
+    }
+
+    function dateCheck() {
+
+        var startDate, endDate;
+        startDate = Date.parse(document.getElementById("startDate").value);
+        endDate = Date.parse(document.getElementById("endDate").value);
+
+
+        if ((endDate <= startDate)) {
+           // alert("End Date Cannot Be Less or Equals to Start Date");
+            $('#mask').fadeIn(500);
+            $('#mask').fadeTo("slow", 0.9);
+            $('.window .close').click(function (e) {
+                e.preventDefault();
+                $('#mask').hide();
+                $('.window').hide();
+            });
+            $('#mask').click(function () {
+                $(this).hide();
+                $('.window').hide();
+            });
+
+            return true;
+        }
+
+    }
+
+</script>
+
+

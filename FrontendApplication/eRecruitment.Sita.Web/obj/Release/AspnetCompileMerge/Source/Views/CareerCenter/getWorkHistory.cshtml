@@ -1,0 +1,115 @@
+﻿@model IEnumerable<eRecruitment.Sita.Web.Models.WorkHistoryModel>
+@{
+    Layout = null;
+
+    AjaxOptions details = new AjaxOptions
+    {
+        //Confirm = "Save these changes?",
+        OnBegin = "OnBeginDetailMethod",
+        OnFailure = "OnFailtureDetailMethod",
+        OnSuccess = "OnSuccessDetailMethod",
+        OnComplete = "OnCompleteDetailMethod"
+    };
+}
+<p>
+    <input type="button" value="Create New" class="btn btn-primary" onclick="getAddWorkFunc()" />
+</p>
+<div class="box-body">
+    <div class="box">
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table id="example7" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Job Title</th>
+                        <th>Position Held</th>
+                        <th>Department</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (@ViewBag.WorkHistory != null)
+                    {
+                        foreach (var item in ViewBag.WorkHistory)
+                        {
+                            <tr>
+                                <td>@item.companyName</td>
+                                <td>@item.jobTitle</td>
+                                <td>@item.positionHeld</td>
+                                <td>@item.department</td>
+                                <td>@item.startDate</td>
+                                <td>@item.endDate</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success">Action</button>
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                @*<a href="#myModalWorkHistory" data-toggle="modal" id="@item.workHistoryID" data-id="@item.workHistoryID" onclick="return GetWorkHistoryID(@item.workHistoryID)" data-target="#myModalWorkHistory"><span class="fa fa-pencil" style="color:green"></span>Edit</a>*@
+                                                <a href="" onclick="getEditWorkFunc(@item.workHistoryID)"><span class="fa fa-pencil" style="color:green"></span>Edit</a>
+                                            </li>
+                                            <li>
+                                                <a href="" onclick="getDeleteWorkFunc(@item.workHistoryID)"><span class="fa fa-trash red" style="color:red"></span>Remove</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+</div>
+
+<script type="text/javascript">
+    function getAddWorkFunc() {
+        $("#getWorkTable").load('@(Url.Action("AddWorkHistory", "CareerCenter"))');
+    }
+
+    function getDeleteWorkFunc(data) {
+        $("#getWorkTable").load('@(Url.Action("WorkHistoryDelete", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+    function getEditWorkFunc(data) {
+        $("#getWorkTable").load('@(Url.Action("EditWorkHistory", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+
+    var isError = false;
+    function OnBeginDetailMethod() {
+        $("#divDetailsStatus").text("Loading ....");
+    }
+
+    function OnFailtureDetailMethod(error) {
+        $("#errormessages").text(error.responseText);
+        $("#divDetailsStatus").text("");
+        isError = true;
+    }
+
+    function OnSuccessDetailMethod(data) {
+        $("#divDetailsStatus").text("Processed the data Successfully!");
+        closemodal();
+        $("#getWorkTable").load('@(Url.Action("getWorkHistory", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        isError = false;
+    }
+
+    function closemodal() {
+        var elements = document.getElementsByClassName('modal-backdrop in');
+        while (elements.length > 0) {
+            elements[0].classList.remove('modal-backdrop');
+        }
+    }
+    function OnCompleteDetailMethod(data, status) {
+        if (!isError) {
+            $("#divDetailsStatus").text("Request status: " + status);
+        }
+    }
+</script>

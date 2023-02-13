@@ -1,0 +1,226 @@
+﻿@model eRecruitment.Sita.Web.Models.ScheduleInterviews
+
+@{
+    ViewBag.Title = "Add";
+}
+
+@using System.Data.Linq
+@using Microsoft.AspNet.Identity
+@{
+    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+}
+<head>
+    @*<script src="~/Content/eRecruit/bootstrap-multiselect.js"></script>
+        <link href="~/Content/eRecruit/bootstrap-multiselect.css" rel="stylesheet" />
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+        <script src="~/Content/assets/js/jquery-ui.min.js"></script>*@
+
+    <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <link href="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/css/bootstrap-multiselect.css"
+          rel="stylesheet" type="text/css" />
+    <script src="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/js/bootstrap-multiselect.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css"
+          rel="stylesheet" type="text/css" />
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        var j = jQuery.noConflict();
+        j(function () {
+            j('#VacancyQuestionID').multiselect({
+                includeSelectAllOption: true
+            });
+        });
+    </script>
+</head>
+
+
+<body>
+    @*<div class="col-md-6" id="Alert">*@
+
+    @*<div class="box box-default">*@
+    @*<div class="box-header with-border">
+            <i class="fa fa-warning"></i>
+            @*<h3 class="box-title">Alerts</h3>
+        </div>*@
+    <!-- /.box-header -->
+
+    <section class="content-header">
+        <h1>
+            &nbsp;
+            @*Blank page*@
+            @*<small>it all starts here</small>*@
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Schedule Interviews</a></li>
+            <li class="active">Create Interviews</li>
+        </ol>
+
+
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+
+        <div class="box">
+
+
+    <div class="box-header with-border">
+        <h3 class="box-title">Create Interview</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                    title="Collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <div class="box-body">
+        @using (Html.BeginForm("ScheduleInterview", "ScheduleInterviews", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", id = "savevacancy" }))
+            {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Interview Type</label>
+                            @Html.DropDownListFor(m => m.InterviewTypeID, new SelectList(ViewBag.InterviewType, "InterviewTypeID", "InterviewTypeDescription"), "--Select Interview Type--", new { @class = "form-control", tabindex = 1 })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Date</label>
+                           @Html.EditorFor(m => m.Date, new { htmlAttributes = new { @class = "form-control datepicker", @type = "date", placeholder = " Date", tabindex = 2 } })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Start Time</label>
+                            @Html.TextBoxFor(m => m.StartTime, new { @class = "form-control", placeholder = "Start Time", tabindex = 3 })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>End Time</label>
+                            @Html.TextBoxFor(m => m.EndTime, new { @class = "form-control", placeholder = "End Time", tabindex = 4 })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Location</label>
+                            @Html.DropDownListFor(m => m.LocationID, new SelectList(ViewBag.Location, "LocationID", "LocationDiscription"), "--Select Location --", new { @class = "form-control", tabindex = 5 })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Category</label>
+                            @Html.DropDownListFor(m => m.CategoryID, new SelectList(ViewBag.Category, "InterviewCatID", "InterviewCatDescription"), "--Select Category --", new { @class = "form-control", tabindex = 6 })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Interview Status</label>
+                            @Html.DropDownListFor(m => m.InterviewStatusID, new SelectList(ViewBag.InterviewStatus, "InterviewStatusID", "InterviewStatusDescription"), "--Select Interview Status --", new { @class = "form-control", tabindex = 7 })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label>Internal Contact Name </label>
+                            @Html.TextBoxFor(m => m.InternalContactName, new { @class = "form-control", placeholder = "Internal Contact Name", tabindex = 8 })
+                        </div>
+                    </div>
+                    <div class="form-group">              
+                        <div class="col-md-12">
+                            <label>Internal Contact Number</label>
+                            @Html.TextBoxFor(m => m.InternalContactNumber, new { @class = "form-control", placeholder = "Internal Contact Number", tabindex = 9 })
+                        </div>
+                    </div>
+                    <div class="form-group">          
+                        <div class="col-md-12">
+                            <label>Primary Interviewer</label>
+                            @Html.TextBoxFor(m => m.PrimaryInterviewerID, new { @class = "form-control", placeholder = "Primary Interviewer", tabindex = 10 })
+                        </div>
+                     </div>
+                   </div>
+                 </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                          <div class="box">
+                            <div class="box-header">
+                                <h3 class="box-title">
+                                    Notes To Candidate
+                                    <small>Record Additional Interview Details</small>
+                                </h3>
+                                <!-- tools box -->
+                                <div class="pull-right box-tools">
+                                    <button type="button" class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip"
+                                            title="Collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm" data-widget="remove" data-toggle="tooltip"
+                                            title="Remove">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                                <!-- /. tools -->
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body pad">
+                                <form>
+
+                                    @Html.TextAreaFor(m => m.NotetoCandidate, new { @class = "form-control", placeholder = "Place some text here", style = "width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;", tabindex = 11 })                                    
+                                </form>
+                             </div>
+                         </div>
+                   </div>
+
+                        <div class="clearfix"></div><br />
+                        <div class="col-md-12 pull-right">
+                            <input type="submit" class="btn btn-success"  value="Apply" />
+                            |
+                            <a href="@Url.Action(" ", " " , new { id = User.Identity.GetUserId() })" type="button" class="btn btn-danger">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                &nbsp;
+            </div>
+            <!-- /.modal -->
+            <!-- /.box-footer-->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+
+</body>
+
+
+<script>
+    $(document).ready(function ()
+    {
+            $("#ConD").hide();
+        });
+</script>
+
+
+
+
+
+
+
+
+
+

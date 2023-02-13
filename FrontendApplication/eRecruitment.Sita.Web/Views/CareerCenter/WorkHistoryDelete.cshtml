@@ -1,0 +1,100 @@
+﻿@model eRecruitment.Sita.Web.Models.WorkHistoryModel
+@{
+    Layout = null;
+}
+<h3>Are You Sure You Want To Delete This?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.companyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.companyName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.jobTitle)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.jobTitle)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.positionHeld)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.positionHeld)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.department)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.department)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.startDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.startDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.endDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.endDate)
+        </dd>
+
+    </dl>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <button class="btn btn-warning" onclick="getDeleteWorkHistoryFunc(@Model.workHistoryID)" type="button" data-toggle="tooltip" data-placement="top"> Confirm</button> |
+                <button class="btn btn-primary" onclick="getDeleteWFunc(@Model.workHistoryID)" type="button" data-toggle="tooltip" data-placement="top"> Back to List</button>
+            </div>
+        }
+</div>
+
+<script>
+    function getDeleteWFunc(data) {
+        $("#getWorkTable").load('@(Url.Action("getWorkHistory", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+
+    function getDeleteWorkHistoryFunc(id) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteWorkHistory", "CareerCenter")'+ '?id=' + id,
+            contentType: false,
+            processData: false,
+            data: { "id": id },
+            success: function (data) {
+                $("#getWorkTable").load('@(Url.Action("getWorkHistory", "CareerCenter"))');
+                },
+            error: function (xhr, status, p3, p4) {
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                $("#divDetailsStatus").text(err);
+            }
+        });
+
+        function OnSuccessDetailMethod(data) {
+            $("#divDetailsStatus").text("Processed the data Successfully!");
+            closemodal();
+            $("#getWorkTable").load('@(Url.Action("getWorkHistory", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+            isError = false;
+        }
+
+    }
+</script>

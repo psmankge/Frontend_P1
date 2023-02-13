@@ -1,0 +1,69 @@
+﻿@model eRecruitment.Sita.Web.Models.CandidateSkillsProfileModel
+@{
+    Layout = null;
+}
+<h3>Are You Sure You Want To Delete This?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.skillName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.skillName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SkillProficiency)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SkillProficiency)
+        </dd>
+
+    </dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color">
+        <button class="btn btn-warning" onclick="getDeleteSkiFunc(@Model.skillsProfileID)" type="button" data-toggle="tooltip" data-placement="top"> Confirm</button> |
+        <button class="btn btn-primary" onclick="getDeleteSPFunc(@Model.skillsProfileID)" type="button" data-toggle="tooltip" data-placement="top"> Back to List</button>
+    </div>
+}
+</div>
+
+<script>
+    function getDeleteSPFunc(data) {
+        $("#getSkillTable").load('@(Url.Action("getSkills", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+
+    function getDeleteSkiFunc(id) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteSkills_Profile", "CareerCenter")'+ '?id=' + id,
+            contentType: false,
+            processData: false,
+            data: { "id": id },
+            success: function (data) {
+                $("#getSkillTable").load('@(Url.Action("getSkills", "CareerCenter"))');
+                },
+            error: function (xhr, status, p3, p4) {
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                $("#divDetailsStatus").text(err);
+            }
+        });
+
+        function OnSuccessDetailMethod(data) {
+            $("#divDetailsStatus").text("Processed the data Successfully!");
+            closemodal();
+            $("#getSkillTable").load('@(Url.Action("getSkills", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+            isError = false;
+        }
+
+    }
+</script>

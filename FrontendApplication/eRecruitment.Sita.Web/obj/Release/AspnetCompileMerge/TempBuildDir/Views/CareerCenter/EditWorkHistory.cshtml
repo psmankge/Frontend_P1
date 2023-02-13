@@ -1,0 +1,109 @@
+﻿@model eRecruitment.Sita.Web.Models.WorkHistoryModel
+
+@{
+    Layout = null;
+
+    AjaxOptions details = new AjaxOptions
+    {
+        //Confirm = "Save these changes?",
+        OnBegin = "OnBeginDetailMethod",
+        OnFailure = "OnFailtureDetailMethod",
+        OnSuccess = "OnSuccessDetailMethod",
+        OnComplete = "OnCompleteDetailMethod"
+    };
+}
+@using (Ajax.BeginForm("EditWorkHistory", "CareerCenter", details))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Edit this Record</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.workHistoryID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.companyName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.companyName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.companyName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.jobTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.jobTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.jobTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.positionHeld, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.positionHeld, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.positionHeld, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.department, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.department, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.department, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.startDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.startDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.startDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.endDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.endDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.endDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" id="btnEditWorkHistory" class="btn btn-warning">Confirm</button> |
+                <button class="btn btn-primary" onclick="getEditEditWFunc(@Model.workHistoryID)" type="button" data-toggle="tooltip" data-placement="top"> Back to List</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function getEditEditWFunc(data) {
+        $("#getWorkTable").load('@(Url.Action("getWorkHistory", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+ var isError = false;
+    function OnBeginDetailMethod() {
+        $("#divDetailsStatus").text("Loading ....");
+    }
+
+    function OnFailtureDetailMethod(error) {
+        $("#errormessages").text(error.responseText);
+        $("#divDetailsStatus").text("");
+        isError = true;
+    }
+
+    function OnSuccessDetailMethod(data) {
+        $("#divDetailsStatus").text("Processed the data Successfully!");
+        $("#getWorkTable").load('@(Url.Action("getWorkHistory", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        isError = false;
+    }
+
+    function OnCompleteDetailMethod(data, status) {
+        if (!isError) {
+            $("#divDetailsStatus").text("Request status: " + status);
+
+        }
+    }
+</script>

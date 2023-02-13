@@ -1,0 +1,299 @@
+﻿@model IEnumerable<eRecruitment.Sita.Web.Models.ScreenedCandidateModel>
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "ViewForApproval";
+}
+@using System.Data.Linq
+@{
+    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+}
+<section class="content-header">
+    <h1>
+        &nbsp;
+        @*Blank page*@
+        @*<small>it all starts here</small>*@
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Vacancy</a></li>
+        <li class="active">Candidate Screening</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="box">
+        <div class="box-header with-border">
+            <h3></h3>
+            @*<h3 class="box-title">View Vacancy</h3>*@
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                        title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove" disabled data-toggle="tooltip" title="Remove">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            @using (Html.BeginForm("ExportToExel", "Candidate", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+               
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+
+                @*if (@ViewBag.ErrorMessage != null || @ViewBag.ErrorMessage != "")
+                    {
+                        <div class="divError">
+                            <pre style="color:red;font-weight:bold">@ViewBag.ErrorMessage</pre>
+                        </div>
+                    }*@
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <i class="fa fa-text-width"></i>
+                                <h3 class="box-title">Candidate Screening</h3>
+                            </div>
+
+                            <!-- /.box-header -->
+                            <div class="box-body" ng-init="GetScreeningVacancyList();GetProvinceList(); GetGenderList(); GetRaceList()">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <dl class="dl-horizontal">
+                                            <dt>Vacancy Name:<span class="required" style="color:red;"> * </span></dt>
+                                            <dd>
+                                                @*@Html.DropDownListFor(m => item1.VacancyID, new SelectList(ViewBag.CandidateScreening, "VacancyID", "VacancyName", item1.VacancyID, "-- Please Select Vacancy Name --"), new { @class = "form-control", required = "required", value = "" })*@
+                                                <select name="VacancyID" id="VacancyID" required class="form-control"
+                                                        ng-model="VacancyID" ng-change="GetVacancyQuestionBank()">
+                                                    <option ng-repeat="b in GetCandidateScreeningVacancy" value="{{b.VacancyID}}">{{b.VacancyName}}</option>
+                                                    <option value="" selected>-- Please Select Vacancy Name --</option>
+                                                </select>
+                                            </dd>
+                                            <br />
+                                            <dt>Province Name:<span class="required" style="color:red;"> * </span></dt>
+                                            <dd>
+                                                <select id="ProvinceID" required name="ProvinceID" class="form-control" ng-model="ProvinceID">
+                                                    <option value="10" selected>-- All Provinces--</option>
+                                                    <option ng-repeat="b in ProvinceData | filter: {ProvinceID: '!' + '-1'}" value="{{b.ProvinceID}}">{{b.ProvinceName}}</option>
+                                                    <option value="" selected>-- Please Select Province--</option>
+                                                </select>
+                                            </dd>
+                                            <br />
+                                            <dt>Age Range:<span class="required" style="color:red;"> * </span></dt>
+
+                                            <dd>
+                                                <select id="AgeRange" required name="AgeRange" class="form-control">
+                                                    <option value="1" selected>All </option>
+                                                    <option value="2">18 - 25</option>
+                                                    <option value="3">25 - 30</option>
+                                                </select>
+                                            </dd>
+                                            <br />
+                                            <dt>Gender:<span class="required" style="color:red;"> * </span></dt>
+                                            @*<dd>
+                                                <select id="GenderID" required name="GenderID" class="form-control">
+                                                    <option value="0" selected>Any</option>
+                                                    <option value="1">Males</option>
+                                                    <option value="2">Females</option>
+                                                </select>
+                                            </dd>*@
+                                            <dd>
+                                                <select name="GenderID" id="GenderID" required class="form-control"
+                                                        ng-model="GenderID">
+                                                    <option ng-repeat="b in GenderList" value="{{b.GenderID}}">{{b.Gender}}</option>
+                                                    <option value="0" selected>All</option>
+                                                    <option value="" selected>-- Please Select Gender--</option>
+                                                </select>
+                                            </dd>
+                                            <br />
+                                            <dt>Race:<span class="required" style="color:red;"> * </span></dt>
+                                            @*<dd>
+                                                <select id="RaceID" required name="RaceID" class="form-control">
+                                                    <option value="0" selected>All</option>
+                                                    <option value="2">Black</option>
+                                                    <option value="3">Colored</option>
+                                                    <option value="4">White</option>
+                                                </select>
+                                            </dd>*@
+                                            <dd>
+                                                <select name="RaceID" id="RaceID" required class="form-control"
+                                                        ng-model="RaceID">
+                                                    <option ng-repeat="b in RaceList" value="{{b.RaceID}}">{{b.RaceName}}</option>
+                                                    <option value="0" selected>All</option>
+                                                    <option value="" selected>-- Please Select Race--</option>
+                                                </select>
+                                            </dd>
+                                            <br />
+                                            <dt></dt>
+                                            <dd>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label>
+                                                            <input type="checkbox" id="chkWithDisabilities" name="chkWithDisabilities" class="minimal">
+                                                            &nbsp; Candidates with disabilities
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>
+                                                            <input type="checkbox" id="chkWithAttachedCV" checked name="chkWithAttachedCV" class="minimal">
+                                                            &nbsp; Candidates with attached CV
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>
+                                                            <input type="checkbox" id="chkWithAttachedID" name="chkWithAttachedID" class="minimal">
+                                                            &nbsp; Candidates with attached ID Copy
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                            <dt></dt>
+                                            <dd>
+                                                <hr />
+                                                <div class="col-md-12">
+                                                    <div class="box box-success">
+                                                        <div class="box-header with-border">
+                                                            <h3 class="box-title">Question Banks</h3>
+                                                        </div>
+                                                        <!-- /.box-header -->
+                                                        <div class="box-body">
+                                                            <div ng-repeat="d in VacancyQuestionBank">
+                                                                <div class="action-checkbox">
+                                                                    <input id="VacancyQuestionID" ng-model="VacancyQuestionID" name="VacancyQuestionID" type="checkbox" value="{{d.id}}" />
+                                                                    {{d.GeneralQuestionDesc}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.box-body -->
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                            <dt></dt>
+                                            <dd>
+                                                <button type="submit" class="btn btn-primary"><span class="fa fa-exchange"></span> Generate List</button>
+                                                @*<button type="button" ng-click="GetScreenedCandidateList()" class="btn btn-primary"><span class="fa fa-exchange"></span> Generate List</button>*@
+                                                @*<button type="button" class="btn btn-success" ng-click="ExportCandidateDataToExcel()"><span class="fa fa-file-excel-o"></span> Export To Excel</button>*@
+                                               <button type="button" class="btn btn-success"><span class="fa fa-save"></span> Accept List</button>
+                                                @*<button type="button" class="btn btn-danger"><span class="fa fa-times"></span> Clear List</button>*@
+                                            </dd>
+                                            <dt></dt>
+                                            <dd>
+                                                <br />
+                                                @*@if (Model != null)
+                                                {
+                                                    
+                                                    @Model.Count()
+                                                }*@
+                                              
+                                                @*<div class="box-body">
+                                                    <div class="box">
+                                                        <div class="box-body">
+                                                            <table id="example1" class="table table-bordered table-striped" data-orderable>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>ID Number</th>
+                                                                        <th>Surname</th>
+                                                                        <th>FirstName</th>
+                                                                        <th>DateOfBirth</th>
+                                                                        <th>CellNo</th>
+                                                                        <th>EmailAddress</th>
+                                                                        <th>RaceName</th>
+                                                                        <th>Gender</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model != null)
+                                                                    {
+                                                                        foreach (var item in Model)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>@item.IDNumber</td>
+                                                                                <td>@item.Surname</td>
+                                                                                <td>@item.FirstName</td>
+                                                                                <td>@item.DateOfBirth</td>
+                                                                                <td>@item.CellNo</td>
+                                                                                <td>@item.EmailAddress</td>
+                                                                                <td>@item.RaceName</td>
+                                                                                <td>@item.Gender</td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>*@
+                                            </dd>
+                                        </dl>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                </div>
+                }
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"> Message</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </div>
+
+        <!-- /.box-body -->
+        <div class="box-footer">
+            &nbsp;
+        </div>
+        <!-- /.box-footer-->
+    </div>
+    <!-- /.box -->
+</section>
+<!-- /.content -->
+
+<script>
+    window.onload = function () {
+        var VacancyName = sessionStorage.getItem("vacancyName");
+        var ProvinceName = sessionStorage.getItem("provinceName");
+        var AgeRange = sessionStorage.getItem("ageRange");
+        var Gender = sessionStorage.getItem("gender");
+        var Race = sessionStorage.getItem("race");
+        $('#VacancyID').val(VacancyName);
+        $('#ProvinceID').val(ProvinceName);
+        $('#AgeRangeID').val(AgeRange);
+        $('#GenderID').val(Gender);
+        $('#RaceID').val(Race);
+        //alert("he");
+    }
+    $('#VacancyID').change(function () {
+        var VacancyName1 = $(this).val();
+        var ProvinceName1 = $(this).val();
+        var AgeRange1 = $(this).val();
+        var Gender1 = $(this).val();
+        var Race1 = $(this).val();
+        sessionStorage.setItem("vacancyName", VacancyName1)
+        sessionStorage.setItem("provinceName", ProvinceName1)
+        sessionStorage.setItem("ageRange", AgeRange1)
+        sessionStorage.setItem("gender", Gender1)
+        sessionStorage.setItem("race", Race1)
+
+    })
+</script>

@@ -1,0 +1,74 @@
+﻿@model eRecruitment.Sita.Web.Models.Profile_LangauageModel
+@{
+    Layout = null;
+
+    AjaxOptions details = new AjaxOptions
+    {
+        //Confirm = "Save these changes?",
+        OnBegin = "OnBeginDetailMethod",
+        OnFailure = "OnFailtureDetailMethod",
+        OnSuccess = "OnSuccessDetailMethod",
+        OnComplete = "OnCompleteDetailMethod"
+    };
+}
+@{
+    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+    eRecruitmentDataAccess _dal = new eRecruitmentDataAccess();
+}
+
+@using (Ajax.BeginForm("AddLanguages", "CareerCenter", details))
+{
+    @Html.AntiForgeryToken()
+    <div id="divDetailsStatus"></div>
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <label for="inputLanguageName" class="col-sm-2 control-label">Language<span class="required">*</span></label>
+            <div class="col-sm-10">
+                @Html.DropDownList("languageID", new SelectList(ViewBag.Language, "LanguageID", "LanguageName", "--Select Language--"), new { @class = "form-control", required = "required", value = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputSkillName" class="col-sm-2 control-label">Language Proficiency<span class="required">*</span></label>
+            <div class="col-sm-10">
+                @Html.DropDownList("LanguageProficiencyID", new SelectList(ViewBag.LanguageProficiency, "LanguageProficiencyID", "LanguageProficiency", "--Select Language Proficiency--"), new { @class = "form-control", required = "required", value = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" id="btnAddLanguage" class="btn btn-primary">Add</button>
+                <input type="button" value="Cancel" class="btn btn-warning" onclick="getAddLanguageFunc()" />
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    function getAddLanguageFunc() {
+        $("#getLanguageTable").load('@(Url.Action("getLanguages", "CareerCenter"))');
+    }
+
+    var isError = false;
+    function OnBeginDetailMethod() {
+        $("#divDetailsStatus").text("Loading ....");
+    }
+
+    function OnFailtureDetailMethod(error) {
+        $("#errormessages").text(error.responseText);
+        $("#divDetailsStatus").text("");
+        isError = true;
+    }
+
+    function OnSuccessDetailMethod(data) {
+        $("#divDetailsStatus").text("Processed the data Successfully!");
+        $("#getLanguageTable").load('@(Url.Action("getLanguages", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        isError = false;
+    }
+
+    function OnCompleteDetailMethod(data, status) {
+        if (!isError) {
+            $("#divDetailsStatus").text("Request status: " + status);
+        }
+    }
+</script>

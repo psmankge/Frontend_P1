@@ -1,0 +1,104 @@
+﻿@model IEnumerable<eRecruitment.Sita.Web.Models.Skills_ProfileModel>
+
+@{
+    Layout = null;
+
+    AjaxOptions details = new AjaxOptions
+    {
+        //Confirm = "Save these changes?",
+        OnBegin = "OnBeginDetailMethod",
+        OnFailure = "OnFailtureDetailMethod",
+        OnSuccess = "OnSuccessDetailMethod",
+        OnComplete = "OnCompleteDetailMethod"
+    };
+}
+
+<p>
+    <input type="button" value="Create New" class="btn btn-primary" onclick="getSkillFunc()" />
+</p>
+<div class="box-body">
+    <div class="box">
+        <div class="box-body">
+            <table id="example3" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Skill Name</th>
+                        <th>Proficiency</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (@ViewBag.SkillsForProfile != null)
+                    {
+                        foreach (var item in ViewBag.SkillsForProfile)
+                        {
+                            <tr>
+                                <td>@item.skillName</td>
+                                <td>@item.SkillProficiency</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success">Action</button>
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a href="" onclick="getDeleteSkillFunc(@item.skillsProfileID)"><span class="fa fa-trash red" style="color:red"></span>Remove</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+</div>
+<!-- /.box-body -->
+
+
+<script type="text/javascript">
+    function getSkillFunc() {
+        $("#getSkillTable").load('@(Url.Action("AddSkills", "CareerCenter"))');
+    }
+
+    function getDeleteSkillFunc(data) {
+        $("#getSkillTable").load('@(Url.Action("DeleteSkill_Profile", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+    }
+
+    var isError = false;
+    function OnBeginDetailMethod() {
+        $("#divDetailsStatus").text("Loading ....");
+    }
+
+    function OnFailtureDetailMethod(error) {
+        $("#errormessages").text(error.responseText);
+        $("#divDetailsStatus").text("");
+        isError = true;
+    }
+
+    function OnSuccessDetailMethod(data) {
+        $("#divDetailsStatus").text("Processed the data Successfully!");
+        closemodal();
+        $("#getEduTable").load('@(Url.Action("getSkillTable", "CareerCenter", null, Request.Url.Scheme))?id=' + data);
+        isError = false;
+    }
+
+    function closemodal() {
+        var elements = document.getElementsByClassName('modal-backdrop in');
+        while (elements.length > 0) {
+            elements[0].classList.remove('modal-backdrop');
+        }
+    }
+    function OnCompleteDetailMethod(data, status) {
+        if (!isError) {
+            $("#divDetailsStatus").text("Request status: " + status);
+        }
+    }
+</script>
