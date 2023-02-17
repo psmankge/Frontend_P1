@@ -77,30 +77,37 @@ namespace eRecruitment.Sita.Web.Controllers
       //string newWebAPI = null;
       Session["sip"] = null;
 
-      //if (WebURL.Contains("dev"))
-      //{
-      //     newWebAPI = string.Format(webapiDev, 158);
-      //}
-      //else if (WebURL.Contains("cit"))
-      //{
-      //    newWebAPI = string.Format(webapiDev, 208);
-      //}
-      //else if (WebURL.Contains("sit"))
-      //{
-      //    newWebAPI = string.Format(webapiDev, 237);
-      //}
-      //else if (WebURL.Contains("uat"))
-      //{
-      //    newWebAPI = string.Format(webapiDev, 140);
-      //}
-      //else if (WebURL.Contains("beta"))
-      //{
-      //    newWebAPI = string.Format(webapiDevProd, 57);
-      //}
-      //else
-      //{
-      //    newWebAPI = string.Format(webapiDevProd, 31);
-      //}
+            //if (WebURL.Contains("dev"))
+            //{
+            //     newWebAPI = string.Format(webapiDev, 158);
+            //}
+            //else if (WebURL.Contains("cit"))
+            //{
+            //    newWebAPI = string.Format(webapiDev, 208);
+            //}
+            //else if (WebURL.Contains("sit"))
+            //{
+            //    newWebAPI = string.Format(webapiDev, 237);
+            //}
+            //else if (WebURL.Contains("uat"))
+            //{
+            //    newWebAPI = string.Format(webapiDev, 140);
+            //}
+            //else if (WebURL.Contains("beta"))
+            //{
+            //    newWebAPI = string.Format(webapiDevProd, 57);
+            //}
+            //else
+            //{
+            //    newWebAPI = string.Format(webapiDevProd, 31);
+            //}
+            if (Request.Browser.Type.Contains("InternetExplorer"))
+            {
+                return RedirectToAction("BrowserValidation");
+
+
+
+            }
 
       if (id != null)
       {
@@ -245,6 +252,8 @@ namespace eRecruitment.Sita.Web.Controllers
                                 //Insert User Profile
                                 _db.CreateUserProfile(userID, idNumber, passportNo, surname, fullname, phoneNumber, email);
                             }
+
+                            
 
                             return this.RedirectToAction("Jobs", "Home");
 
@@ -682,6 +691,12 @@ namespace eRecruitment.Sita.Web.Controllers
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
+        {
+            return View();
+        }
+        //Browser error message 
+        [AllowAnonymous]
+        public ActionResult BrowserValidation()
         {
             return View();
         }
