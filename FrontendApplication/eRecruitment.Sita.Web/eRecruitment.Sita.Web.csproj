@@ -3845,6 +3845,7 @@
     <Content Include="Views\Admin\EditSalaryBanks.cshtml" />
     <Content Include="Views\Admin\ReassignUserRole.cshtml" />
     <Content Include="Views\Vacancy\ApplyForVacancy.cshtml" />
+    <Content Include="Views\Account\BrowserValidation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content2\images\" />

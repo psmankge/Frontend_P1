@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="eRecruitmentDBCR7" Class="eRecruitmentDataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=MERA00120;Initial Catalog=eRecruitmentDBCR7;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="eRecruitmentDBCR7ConnectionString" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="eRecruitmentDB" Class="eRecruitmentDataClassesDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=MERA00412\SQLEXPRESS2019;Initial Catalog=eRecruitmentDB;Integrated Security=True" SettingsObjectName="eRecruitment.Sita.Web.Properties.Settings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
   <Table Name="dbo.AspNetRoles" Member="AspNetRoles">
     <Type Name="AspNetRole">
       <Column Name="Id" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -201,14 +201,6 @@
     <Type Name="lutGender">
       <Column Name="GenderID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Gender" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.lutGeneralQuestion" Member="lutGeneralQuestions">
-    <Type Name="lutGeneralQuestion">
-      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="GeneralQuestionDesc" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
-      <Column Name="OrganisationID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="QCategoryID" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.lutInterviewCategory" Member="lutInterviewCategories">
@@ -447,18 +439,6 @@
       <Column Name="CVAttached" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="IDAttached" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="AgeRange" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.tblCandidateVacancyApplication" Member="tblCandidateVacancyApplications">
-    <Type Name="tblCandidateVacancyApplication">
-      <Column Name="ApplicationID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="UserID" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="VacancyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="IDNumber" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="ApplicationDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="ApplicationStatusID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="CreatedOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="OrganisationID" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.tblCreateInterview" Member="tblCreateInterviews">
@@ -1018,6 +998,40 @@
       <Column Name="CreatedByDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.tblCandidateVacancyApplication" Member="tblCandidateVacancyApplications">
+    <Type Name="tblCandidateVacancyApplication">
+      <Column Name="ApplicationID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="VacancyID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IDNumber" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ApplicationDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ApplicationStatusID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CreatedOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="OrganisationID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Declaration" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.lutGeneralQuestion" Member="lutGeneralQuestions">
+    <Type Name="lutGeneralQuestion">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="GeneralQuestionDesc" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="OrganisationID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="QCategoryID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="QualificationTypeID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Experience" Type="System.String" DbType="VarChar(6)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.lutJobSpecificQuestion" Member="lutJobSpecificQuestions">
+    <Type Name="lutJobSpecificQuestion">
+      <Column Name="JobSpecificeQuestionID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="JobTitleID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="JobSpecificeQuestionDesc" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="CreatedDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="CreatedBy" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ModifyDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ModifiedBy" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
   <Function Name="dbo.AddProfile" Method="AddProfile">
     <Parameter Name="Userid" Parameter="userid" Type="System.String" DbType="NVarChar(128)" />
     <Parameter Name="IDNumber" Parameter="iDNumber" Type="System.String" DbType="VarChar(50)" />
@@ -1532,13 +1546,6 @@
     <Parameter Name="endDate" Type="System.DateTime" DbType="Date" />
     <Return Type="System.Int32" />
   </Function>
-  <Function Name="dbo.proc_eRecruitmentInsertIntoCandidateVacancyApplication" Method="proc_eRecruitmentInsertIntoCandidateVacancyApplication">
-    <Parameter Name="UserID" Parameter="userID" Type="System.String" DbType="NVarChar(50)" />
-    <Parameter Name="VacancyID" Parameter="vacancyID" Type="System.Int32" DbType="Int" />
-    <Parameter Name="OrganisationID" Parameter="organisationID" Type="System.Int32" DbType="Int" />
-    <Parameter Name="IDNumber" Parameter="iDNumber" Type="System.String" DbType="VarChar(50)" />
-    <Return Type="System.Int32" />
-  </Function>
   <Function Name="dbo.proc_eRecruitmentAddWorkHistory" Method="proc_eRecruitmentAddWorkHistory">
     <Parameter Name="companyName" Type="System.String" DbType="NVarChar(50)" />
     <Parameter Name="jobTitle" Type="System.String" DbType="NVarChar(50)" />
@@ -1706,6 +1713,35 @@
     <Parameter Name="FirstName" Parameter="firstName" Type="System.String" DbType="VarChar(50)" />
     <Parameter Name="Surname" Parameter="surname" Type="System.String" DbType="VarChar(50)" />
     <Parameter Name="passportNo" Type="System.String" DbType="VarChar(50)" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.proc_eRecruitmentCheckCompleteProfile" Method="proc_eRecruitmentCheckCompleteProfile">
+    <Parameter Name="UserID" Parameter="userID" Type="System.String" DbType="VarChar(100)" />
+    <ElementType Name="proc_eRecruitmentCheckCompleteProfileResult">
+      <Column Name="pkProfileID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserID" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
+      <Column Name="Surname" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FirstName" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="InstitutionName" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="QualificationName" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="companyName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="jobTitle" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="positionHeld" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="SkillProficiencyID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LanguageProficiencyID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RefName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.proc_eRecruitmentInsertIntoCandidateVacancyApplication" Method="proc_eRecruitmentInsertIntoCandidateVacancyApplication">
+    <Parameter Name="UserID" Parameter="userID" Type="System.String" DbType="NVarChar(50)" />
+    <Parameter Name="VacancyID" Parameter="vacancyID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="OrganisationID" Parameter="organisationID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IDNumber" Parameter="iDNumber" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Declaration" Parameter="declaration" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.proc_eRecruitmentWorkExperienceVSProfile" Method="proc_eRecruitmentWorkExperienceVSProfile">
+    <Parameter Name="ProfileID" Parameter="profileID" Type="System.String" DbType="VarChar(5)" />
     <Return Type="System.Int32" />
   </Function>
 </Database>

@@ -303,15 +303,21 @@ namespace eRecruitment.Sita.Web.App_Data.DAL
     partial void InsertlutJobSpecificQuestion(lutJobSpecificQuestion instance);
     partial void UpdatelutJobSpecificQuestion(lutJobSpecificQuestion instance);
     partial void DeletelutJobSpecificQuestion(lutJobSpecificQuestion instance);
-    #endregion
-		
-		public eRecruitmentDataClassesDataContext() : 
-				base(global::eRecruitment.Sita.Web.Properties.Settings.Default.DefaultConnection, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public eRecruitmentDataClassesDataContext(string connection) : 
+        #endregion
+
+        public eRecruitmentDataClassesDataContext() :
+                base(global::System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, mappingSource)
+        {
+            OnCreated();
+        }
+
+        //public eRecruitmentDataClassesDataContext() :
+        //        base(global::eRecruitment.Sita.Web.Properties.Settings.Default.DefaultConnection, mappingSource)
+        //{
+        //    OnCreated();
+        //}
+
+        public eRecruitmentDataClassesDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();

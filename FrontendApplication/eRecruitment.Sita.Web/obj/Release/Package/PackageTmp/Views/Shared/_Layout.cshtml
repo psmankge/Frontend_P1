@@ -1,75 +1,106 @@
 ﻿<!DOCTYPE html>
 <html ng-app="mainApp" ng-controller="mainCtrl" ng-init="GetStatusList();GetEmploymentTypeList()">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>SITA | eRecruitment</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  @*<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">*@
-  <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="~/Content/bower_components/bootstrap/dist/css/bootstrap.min.css">
-  @*<link href="~/Content/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />*@
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="~/Content/bower_components/font-awesome/css/font-awesome.min.css">
-  <!-- Ionicons -->
-  @*<link rel="stylesheet" href="~/Content/bower_components/Ionicons/css/ionicons.min.css">*@
-  <!-- Theme style -->
-  <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
-  <!-- Morris chart -->
-  @*<link rel="stylesheet" href="~/Content/bower_components/morris.js/morris.css">*@
-  <!-- jvectormap -->
-  <link rel="stylesheet" href="~/Content/bower_components/jvectormap/jquery-jvectormap.css">
-  <!-- Date Picker -->
-  @*<link rel="stylesheet" href="~/Content/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">*@
-  <!-- Daterange picker -->
-  @*<link rel="stylesheet" href="~/Content/bower_components/bootstrap-daterangepicker/daterangepicker.css">*@
-  <!-- bootstrap wysihtml5 - text editor -->
-  <link rel="stylesheet" href="~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-  <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-  <!-- jQuery 3 -->
-  <script src="~/Content/bower_components/jquery/dist/jquery.min.js"></script>
-  <!-- jQuery UI 1.11.4 -->
-  <script src="~/Content/bower_components/jquery-ui/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="~/Content/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
-  <script src="~/Scripts/angular.min.js"></script>
-  <script src="~/Scripts/angular-route.js"></script>
-  <script src="~/appScripts/appController.js"></script>
-  <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
-  <script src="~/Scripts/canvasjs.min.js"></script>
+    <title>SITA | eRecruitment</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    @*<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">*@
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="~/Content/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    @*<link href="~/Content/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />*@
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/Content/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    @*<link rel="stylesheet" href="~/Content/bower_components/Ionicons/css/ionicons.min.css">*@
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
+    <!-- Morris chart -->
+    @*<link rel="stylesheet" href="~/Content/bower_components/morris.js/morris.css">*@
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="~/Content/bower_components/jvectormap/jquery-jvectormap.css">
+    <!-- Date Picker -->
+    @*<link rel="stylesheet" href="~/Content/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">*@
+    <!-- Daterange picker -->
+    @*<link rel="stylesheet" href="~/Content/bower_components/bootstrap-daterangepicker/daterangepicker.css">*@
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="~/Content/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <!-- jQuery 3 -->
+    <script src="~/Content/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="~/Content/bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="~/Content/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/Content/dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="~/Content/dist/css/skins/_all-skins.min.css">
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/appScripts/appController.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/Scripts/canvasjs.min.js"></script>
 
-  @* Date Picker bootstrap *@
-  <link href="~/Content/bootstrap-datepicker.css" rel="stylesheet" />
-  <script src="~/Scripts/bootstrap-datepicker.js"></script>
-  @*End Date Picker bootstrap *@
+    @* Date Picker bootstrap *@
+    <link href="~/Content/bootstrap-datepicker.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap-datepicker.js"></script>
+    @*End Date Picker bootstrap *@
 
-  @using System.Data.Linq
-  @using Microsoft.AspNet.Identity
+    @*=============================Peter 20221014 ===========================*@
+    <script src="~/Content/Datatables/Scripts/jquery-3.5.1.js"></script>
+    <script src="~/Content/Datatables/Scripts/jquery.dataTables.min.js"></script>
+    <script src="~/Content/Datatables/Scripts/dataTables.fixedHeader.min.js"></script>
+    <script src="~/Content/Datatables/Scripts/dataTables.bootstrap4.min.js"></script>
 
-  @{
-    eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
-        new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+    @*Peter*@
 
-    int optid = Convert.ToInt16(Session["sip"]);
-  }
+    <link href="~/Content/Datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Content/Datatables/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/Datatables/responsive.bootstrap4.min.css" rel="stylesheet" />
+
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script src="~/Scripts/jquery-2.2.1.min.js"></script>
+    <link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/gridmvc.min.js")" type="text/javascript"></script>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/chosen")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/grid")
+    @Scripts.Render("~/bundles/dhacustom")
+    @*=======================================================================*@
+
+
+    @using System.Data.Linq
+    @using Microsoft.AspNet.Identity
+
+    @{
+        eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db =
+            new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext();
+
+        int optid = Convert.ToInt16(Session["sip"]);
+    }
 
 </head>
 
