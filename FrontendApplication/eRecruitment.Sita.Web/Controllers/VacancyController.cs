@@ -1293,11 +1293,11 @@ namespace eRecruitment.Sita.Web.Controllers
                     {
                         if (educationQualTypefID[i] == d.Value)
                         {
-                            if (CountChecked == educationQualTypefID.Count())
-                            {
-                                isMatched = true; break;
-                            }
-                            CountChecked += 1;
+                            //if (CountChecked == educationQualTypefID.Count()) //Commented on 20230221, while testing it was stuck on this error of Qualifications
+                            //{
+                            isMatched = true; break;
+                            //}
+                            //CountChecked += 1;
                         }
                     }
                 }

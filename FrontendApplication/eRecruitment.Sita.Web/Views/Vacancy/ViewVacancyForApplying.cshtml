@@ -94,7 +94,7 @@
                 if (Session["DeclarationTicked"].ToString() == "false")
                 {
                     <div class="divError">
-                        <pre style="color:red;font-size:small; font-weight:bold; font-style:normal;">Declaration required before you apply for this position, please tick the declaration at the bottom.</pre>
+                        <pre style="color:red;font-size:small; font-weight:bold; font-style:normal;">Declaration required before you apply for this position, please tick the declaration at the bottom of the page.</pre>
                     </div>
                 }
                 //========================================
@@ -863,17 +863,16 @@
 
    
 
+    /* PETER - TO UNCOMMENT THE FOLLOWING FUNCTION WHEN WORKING ON CR15*/
     /*==========Peter added the following function======*/
-    function Check() {
-    var chkDeclare = document.getElementById("chkDeclaration");
-    if (chkDeclare.checked) {
-        $("#divJobQuestions").show();
-            //alert('show');
-        } else {
-            $("#divJobQuestions").hide();
-            //alert('hide');
-        }
-    }
+    //function Check() {
+    //var chkDeclare = document.getElementById("chkDeclaration");
+    //if (chkDeclare.checked) {
+    //    $("#divJobQuestions").show();
+    //    } else {
+    //        $("#divJobQuestions").hide();
+    //    }
+    //}
     /*===================================================*/
 
     /*=============Peter added the following function=========*/
