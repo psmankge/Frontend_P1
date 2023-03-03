@@ -1272,12 +1272,11 @@ namespace eRecruitment.Sita.Web.Controllers
             if (CandidateVacancyResponseID != null)
             {
                 int prfleID = (from a in _db.tblProfiles where a.UserID == uid select a.pkProfileID).FirstOrDefault();
-                var educationQualTypefID = _db.tblCandidateEducations.Where(x => x.ProfileID != 1 && x.ProfileID == prfleID).Select(x => x.QualificationTypeID).OrderBy(n => n).Distinct().ToList();
+                //var educationQualTypefID = _db.tblCandidateEducations.Where(x => x.ProfileID != 1 && x.ProfileID == prfleID).Select(x => x.QualificationTypeID).OrderBy(n => n).Distinct().ToList();
+                var educationQualTypefID = _db.tblCandidateEducations.Where(x => x.ProfileID != 1 && x.ProfileID == prfleID).Select(x => x.QualificationTypeID).ToList();
                 List<int?> list = new List<int?>();
                 int i, p, CountChecked = 0;
                 bool isMatched = false;
-                for (i = 0; i < educationQualTypefID.Count(); i++)
-                {
                     //Get the QualificationTypeID of the selected Education Checkboxes and put them in the list
                     for (p = 0; p < Convert.ToInt32(CandidateVacancyResponseID.Count()); p++)
                     {
@@ -1289,17 +1288,31 @@ namespace eRecruitment.Sita.Web.Controllers
                             list.Add(d.QTypeId);
                         }
                     }
-                    foreach (var d in list)
+
+
+                if (educationQualTypefID.Count() == list.Count())
+                {
+                    for (i = 0; i < educationQualTypefID.Count(); i++)
                     {
-                        if (educationQualTypefID[i] == d.Value)
+                        foreach (var d in list)
                         {
-                            //if (CountChecked == educationQualTypefID.Count()) //Commented on 20230221, while testing it was stuck on this error of Qualifications
-                            //{
-                            isMatched = true; break;
-                            //}
-                            //CountChecked += 1;
+                            if (educationQualTypefID[i] == d.Value)
+                            {
+                                isMatched = true; 
+                                CountChecked += 1;
+                            }
                         }
                     }
+
+                    if (CountChecked == educationQualTypefID.Count)
+                    {
+                        isMatched = true;
+                    } 
+                    else { isMatched = false; }
+                }
+                else
+                {
+                    isMatched = false;
                 }
 
                 if (isMatched == false)
@@ -1318,12 +1331,21 @@ namespace eRecruitment.Sita.Web.Controllers
                 bool isMatched = false;
 
                 for (int i = 1; i < 10; i++) {
-                    if (intWorkExperience == Convert.ToString(i))
+                    if (Convert.ToInt32(intWorkExperience) < 10)
                     {
                         var mylistIDs = _db.lutGeneralQuestions.Where(x => x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
                         if (mylistIDs.Count() > 0){
-                            foreach (var d in mylistIDs) { lstExperience.Add(d); }
-                            foreach (var d in mylistIDs){ if (CandidateVacancyResponseID[i] == d.ToString()) {isMatched = true; break;}}
+                            //foreach (var d in mylistIDs) { lstExperience.Add(d); }
+                            //foreach (var d in mylistIDs){ if (CandidateVacancyResponseID[i] == d.ToString()) {isMatched = true; break;}}
+                            foreach (var d in CandidateVacancyResponseID)
+                            {
+                                if (mylistIDs[i].ToString() == d.ToString())
+                                {
+                                    isMatched = true;
+                                    break;
+                                }
+                                i = 0;
+                            }
                             break;
                         }
                     }
@@ -1331,8 +1353,16 @@ namespace eRecruitment.Sita.Web.Controllers
                     {
                         var mylistIDs = _db.lutGeneralQuestions.Where(x => x.Experience.Contains("10") && x.Experience != null && x.QCategoryID == 2).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
                         if (mylistIDs.Count() > 0){
-                            foreach (var d in mylistIDs) { lstExperience.Add(d); }
-                            foreach (var d in mylistIDs) { if (CandidateVacancyResponseID[i] == d.ToString()) { isMatched = true; break;}}
+                            //foreach (var d in mylistIDs) { lstExperience.Add(d); }
+                            foreach (var s in CandidateVacancyResponseID) 
+                            { 
+                                if (mylistIDs[i].ToString() == s.ToString()) 
+                                { 
+                                    isMatched = true; 
+                                    break;
+                                }
+                                i = 0;
+                            }
                             break;
                         }
                     }
