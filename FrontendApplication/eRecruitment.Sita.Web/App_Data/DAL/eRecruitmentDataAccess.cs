@@ -2178,7 +2178,9 @@ namespace eRecruitment.Sita.Web
       var p = new List<GenderModel>();
       using (eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db = new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext())
       {
-        var Gender = _db.lutGenders.Where(x => x.GenderID != 3).ToList();
+
+        var Gender = _db.lutGenders.Where(x => x.GenderID != 3).OrderBy(x => x.Gender).ToList(); //Peter added order by - 20230315
+        //var Gender = _db.lutGenders.Where(x => x.GenderID != 3).ToList();
 
         foreach (var d in Gender)
         {
