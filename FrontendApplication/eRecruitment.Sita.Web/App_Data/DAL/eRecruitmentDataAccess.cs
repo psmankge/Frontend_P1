@@ -2159,7 +2159,7 @@ namespace eRecruitment.Sita.Web
       var p = new List<RaceModel>();
       using (eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db = new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext())
       {
-        var Race = _db.lutRaces.Where(x => x.RaceID != 6).ToList();
+        var Race = _db.lutRaces.Where(x => x.RaceID != 6).OrderBy(x => x.RaceName).ToList();
 
         foreach (var d in Race)
         {
@@ -2998,7 +2998,7 @@ namespace eRecruitment.Sita.Web
       var p = new List<LaguageProficiencyModel>();
       using (eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db = new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext())
       {
-        var LanguageProficiency = _db.lutLaguage_Proficiencies.ToList();
+        var LanguageProficiency = _db.lutLaguage_Proficiencies.OrderBy(x => x.LanguageProficiency).ToList();
 
         foreach (var d in LanguageProficiency)
         {
@@ -3017,7 +3017,8 @@ namespace eRecruitment.Sita.Web
       var p = new List<SkillProficiencyModel>();
       using (eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext _db = new eRecruitment.Sita.Web.App_Data.DAL.eRecruitmentDataClassesDataContext())
       {
-        var SkillProficiency = _db.lutSkill_Proficiencies.ToList();
+        //var SkillProficiency = _db.lutSkill_Proficiencies.ToList();
+        var SkillProficiency = _db.lutSkill_Proficiencies.OrderBy(x => x.SkillProficiency).ToList();
 
         foreach (var d in SkillProficiency)
         {
