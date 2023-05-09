@@ -1333,7 +1333,9 @@ namespace eRecruitment.Sita.Web.Controllers
                 for (int i = 1; i < 10; i++) {
                     if (Convert.ToInt32(intWorkExperience) < 10)
                     {
-                        var mylistIDs = _db.lutGeneralQuestions.Where(x => x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
+                        //var mylistIDs = _db.lutGeneralQuestions.Where(x => (x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2)).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
+                        var mylistIDs = _db.lutGeneralQuestions.Where(x => (x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2) || (Convert.ToInt32(intWorkExperience) >= Convert.ToInt32(x.Experience.Substring(0,1)) && Convert.ToInt32(intWorkExperience) <= Convert.ToInt32(x.Experience.Substring(4, 1)))).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
+ 
                         if (mylistIDs.Count() > 0){
                             //foreach (var d in mylistIDs) { lstExperience.Add(d); }
                             //foreach (var d in mylistIDs){ if (CandidateVacancyResponseID[i] == d.ToString()) {isMatched = true; break;}}
@@ -1574,7 +1576,7 @@ namespace eRecruitment.Sita.Web.Controllers
       //==================Peter - 20221115=================
       var JobTitleid = _db.tblVacancies.Where(x => x.ID == VacancyID).Select(x => x.JobTitleID).FirstOrDefault();
       //ViewBag.myJobTitleID = JobTitleid;
-      ViewBag.QuestionJobSpecific = _dal.GetGeneralQuestionsJobSpecificList(JobTitleid);
+      //ViewBag.QuestionJobSpecific = _dal.GetGeneralQuestionsJobSpecificList(JobTitleid); commented by Peter on 20230509
       //===================================================
 
       if (msg != null)

@@ -894,16 +894,16 @@
 
                                 <div class="box-body">
                                   Skill Name:<span style="color:red;"> * </span>
-                                    <select name="skillID" id="skillID" required class="form-control"
-                                            ng-model="skillID">
-                                        @*=============Peter 20221124============*@
-                                        <option value="" selected>-- Please Select --</option>
-                                        @*=======================================*@
-                                        <option ng-repeat="b in SkillsTypeList " value="{{b.skillID}}">{{b.skillName}}</option>
-                                        @*=============Peter 20221124============*@
-                                        @*<option value="" selected>-- Please Select --</option>*@
-                                        @*=======================================*@
-                                    </select>
+                                             <select name="skillID" id="skillID" required class="form-control"
+                                                     ng-model="skillID">
+                                                 @*=============Peter 20221124============*@
+                                                 <option value="" selected>-- Please Select --</option>
+                                                 @*=======================================*@
+                                                 <option ng-repeat="b in SkillsTypeList " value="{{b.skillID}}">{{b.skillName}}</option>
+                                                 @*=============Peter 20221124============*@
+                                                 @*<option value="" selected>-- Please Select --</option>*@
+                                                 @*=======================================*@
+                                             </select>
 
                                   <br>Skill Proficiency:<span style="color:red;"> * </span>
                                   <select name="SkillProficiencyID" id="SkillProficiencyID" required class="form-control"
@@ -986,8 +986,6 @@
                               </div>
                               <!-- /.box -->
                             </div>
-
-
                             <div ng-switch-when="Load">
                               <button id="Add" name="Add" class="btn btn-success" ng-click="AddLanguages()"><span class="fa fa-plus"></span> Add New Language</button><br />
                               <br />
@@ -1019,7 +1017,6 @@
                                 </tbody>
                               </table>
                             </div>
-
                           </div>
                         </div>
                         <!-- /.tab-pane -->

@@ -288,85 +288,6 @@
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>eRecruitmentDataClasses.designer.cs</LastGenOutput>
     </Content>
-    <Content Include="Content2\bootstrap-grid.css" />
-    <Content Include="Content2\bootstrap-grid.min.css" />
-    <Content Include="Content2\bootstrap-reboot.css" />
-    <Content Include="Content2\bootstrap-reboot.min.css" />
-    <Content Include="Content2\bootstrap.css" />
-    <Content Include="Content2\chosen-sprite%402x.png" />
-    <Content Include="Content2\chosen-sprite.png" />
-    <Content Include="Content2\chosen.css" />
-    <Content Include="Content2\Datatables\bootstrap.bundle.min.js" />
-    <Content Include="Content2\Datatables\buttons.bootstrap4.min.css" />
-    <Content Include="Content2\Datatables\buttons.bootstrap4.min.js" />
-    <Content Include="Content2\Datatables\buttons.colVis.min.js" />
-    <Content Include="Content2\Datatables\buttons.html5.min.js" />
-    <Content Include="Content2\Datatables\buttons.print.min.js" />
-    <Content Include="Content2\Datatables\Css\bootstrap.min.css" />
-    <Content Include="Content2\Datatables\Css\dataTables.bootstrap.min.css" />
-    <Content Include="Content2\Datatables\Css\fixedHeader.bootstrap.min.css" />
-    <Content Include="Content2\Datatables\Css\responsive.bootstrap.min.css" />
-    <Content Include="Content2\Datatables\dataTables.bootstrap4.min.css" />
-    <Content Include="Content2\Datatables\dataTables.bootstrap4.min.js" />
-    <Content Include="Content2\Datatables\dataTables.buttons.min.js" />
-    <Content Include="Content2\Datatables\dataTables.responsive.min.js" />
-    <Content Include="Content2\Datatables\jquery-3.5.1.js" />
-    <Content Include="Content2\Datatables\jquery.dataTables.min.css" />
-    <Content Include="Content2\Datatables\jquery.dataTables.min.js" />
-    <Content Include="Content2\Datatables\jquery.min.js" />
-    <Content Include="Content2\Datatables\responsive.bootstrap.min.js" />
-    <Content Include="Content2\Datatables\responsive.bootstrap4.min.css" />
-    <Content Include="Content2\Datatables\Scripts\dataTables.bootstrap4.min.js" />
-    <Content Include="Content2\Datatables\Scripts\dataTables.fixedHeader.min.js" />
-    <Content Include="Content2\Datatables\Scripts\jquery-3.5.1.js" />
-    <Content Include="Content2\Datatables\Scripts\jquery.dataTables.min.js" />
-    <Content Include="Content2\default.css" />
-    <Content Include="Content2\font-awesome.css" />
-    <Content Include="Content2\font-awesome.min.css" />
-    <Content Include="Content2\Gridmvc.css" />
-    <Content Include="Content2\login.css" />
-    <Content Include="Content2\Site.css" />
-    <Content Include="Content2\themes\base\accordion.css" />
-    <Content Include="Content2\themes\base\all.css" />
-    <Content Include="Content2\themes\base\autocomplete.css" />
-    <Content Include="Content2\themes\base\base.css" />
-    <Content Include="Content2\themes\base\button.css" />
-    <Content Include="Content2\themes\base\core.css" />
-    <Content Include="Content2\themes\base\datepicker.css" />
-    <Content Include="Content2\themes\base\dialog.css" />
-    <Content Include="Content2\themes\base\draggable.css" />
-    <Content Include="Content2\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Content2\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_222222_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_444444_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_454545_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_555555_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_777620_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_777777_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_888888_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_cc0000_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="Content2\themes\base\images\ui-icons_ffffff_256x240.png" />
-    <Content Include="Content2\themes\base\jquery-ui.css" />
-    <Content Include="Content2\themes\base\jquery-ui.min.css" />
-    <Content Include="Content2\themes\base\menu.css" />
-    <Content Include="Content2\themes\base\progressbar.css" />
-    <Content Include="Content2\themes\base\resizable.css" />
-    <Content Include="Content2\themes\base\selectable.css" />
-    <Content Include="Content2\themes\base\selectmenu.css" />
-    <Content Include="Content2\themes\base\slider.css" />
-    <Content Include="Content2\themes\base\sortable.css" />
-    <Content Include="Content2\themes\base\spinner.css" />
-    <Content Include="Content2\themes\base\tabs.css" />
-    <Content Include="Content2\themes\base\theme.css" />
-    <Content Include="Content2\themes\base\tooltip.css" />
     <Content Include="Content\bootstrap-datepicker.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -2948,6 +2869,7 @@
     <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Scripts\angular-route.min.js.map" />
     <Content Include="Scripts\canvasjs.min.js" />
+    <Content Include="Scripts\CustomValidations.js" />
     <Content Include="Scripts\errors.json" />
     <Content Include="Scripts\angular-touch.min.js.map" />
     <Content Include="Scripts\angular-sanitize.min.js.map" />
@@ -2960,10 +2882,6 @@
     <Content Include="Scripts\angular-aria.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Content\Images\Sita Logo high res.pdf" />
-    <Content Include="Content2\bootstrap-grid.css.map" />
-    <Content Include="Content2\bootstrap-grid.min.css.map" />
-    <Content Include="Content2\bootstrap-reboot.css.map" />
-    <Content Include="Content2\bootstrap-reboot.min.css.map" />
     <None Include="App_Data\DAL\eRecruitmentDataClasses.dbml.layout">
       <DependentUpon>eRecruitmentDataClasses.dbml</DependentUpon>
     </None>
@@ -3848,7 +3766,6 @@
     <Content Include="Views\Account\BrowserValidation.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content2\images\" />
     <Folder Include="eRecruitmentSITACivilian\story_content\notes\" />
   </ItemGroup>
   <ItemGroup>
