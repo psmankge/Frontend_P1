@@ -7,7 +7,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>C:\DEPLOY\Frontend</_PublishTargetUrl>
-    <History>True|2023-03-15T18:23:11.5652056Z;True|2022-01-19T06:20:06.3074632+02:00;True|2021-12-08T09:18:48.8596170+02:00;True|2021-12-05T09:09:07.7220163+02:00;True|2021-11-29T08:28:18.0294843+02:00;True|2021-11-03T09:19:12.0557363+02:00;False|2021-10-11T14:27:39.5217150+02:00;True|2021-06-17T23:53:46.7479665+02:00;</History>
+    <History>False|2023-05-09T17:09:28.4080813Z;True|2023-03-15T20:23:11.5652056+02:00;True|2022-01-19T06:20:06.3074632+02:00;True|2021-12-08T09:18:48.8596170+02:00;True|2021-12-05T09:09:07.7220163+02:00;True|2021-11-29T08:28:18.0294843+02:00;True|2021-11-03T09:19:12.0557363+02:00;False|2021-10-11T14:27:39.5217150+02:00;True|2021-06-17T23:53:46.7479665+02:00;</History>
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApplicationInsights.config">
