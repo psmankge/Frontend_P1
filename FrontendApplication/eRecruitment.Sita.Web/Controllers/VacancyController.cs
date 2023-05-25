@@ -1273,7 +1273,8 @@ namespace eRecruitment.Sita.Web.Controllers
             {
                 int prfleID = (from a in _db.tblProfiles where a.UserID == uid select a.pkProfileID).FirstOrDefault();
                 //var educationQualTypefID = _db.tblCandidateEducations.Where(x => x.ProfileID != 1 && x.ProfileID == prfleID).Select(x => x.QualificationTypeID).OrderBy(n => n).Distinct().ToList();
-                var educationQualTypefID = _db.tblCandidateEducations.Where(x => x.ProfileID != 1 && x.ProfileID == prfleID).Select(x => x.QualificationTypeID).ToList();
+                var educationQualTypefID = _db.tblCandidateEducations.Where(x => x.ProfileID != 1 && x.ProfileID == prfleID).OrderByDescending(x => x.QualificationTypeID).Select(x => x.QualificationTypeID).ToList();
+
                 List<int?> list = new List<int?>();
                 int i, p;
                 bool isMatched = false;
@@ -1293,9 +1294,23 @@ namespace eRecruitment.Sita.Web.Controllers
                     {
                         foreach (var d in list)
                         {
-                            if ((educationQualTypefID[i] == d.Value) || (educationQualTypefID[i] > d.Value))
+                            if ((educationQualTypefID[i] == d.Value) && (educationQualTypefID[i] > d.Value))
                             {
-                                isMatched = true; 
+                                isMatched = true;
+                            }
+                        }
+                    }
+
+                    if (educationQualTypefID.Count() >= list.Count()) 
+                    { 
+                        for (i = 0; i < educationQualTypefID.Count(); i++)
+                        {
+                            foreach (var d in list)
+                            {
+                                if ((educationQualTypefID[i] == d.Value) || (educationQualTypefID[i] > d.Value))
+                                {
+                                    isMatched = true;
+                                }
                             }
                         }
                     }
@@ -1319,12 +1334,9 @@ namespace eRecruitment.Sita.Web.Controllers
                     if (Convert.ToInt32(intWorkExperience) < 10)
                     {
                        
-                       //var mylistIDs = _db.lutGeneralQuestions.Where(x => (x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2) || (Convert.ToInt32(intWorkExperience) >= Convert.ToInt32(x.Experience.Substring(0,1)) && Convert.ToInt32(intWorkExperience) <= Convert.ToInt32(x.Experience.Substring(4, 1)))).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
                         var mylistIDs = _db.lutGeneralQuestions.Where(x => (x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2) || (Convert.ToInt32(intWorkExperience) >= Convert.ToInt32(x.Experience.Substring(0, 1)) && Convert.ToInt32(intWorkExperience) <= Convert.ToInt32(x.Experience.Substring(4, 1))) || (Convert.ToInt32(intWorkExperience) > Convert.ToInt32(x.Experience.Substring(0, 1)))).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
 
                         if (mylistIDs.Count() > 0){
-                            //foreach (var d in mylistIDs) { lstExperience.Add(d); }
-                            //foreach (var d in mylistIDs){ if (CandidateVacancyResponseID[i] == d.ToString()) {isMatched = true; break;}}
                             foreach (var d in CandidateVacancyResponseID)
                             {
                                 if (mylistIDs[i].ToString() == d.ToString())
@@ -1341,7 +1353,6 @@ namespace eRecruitment.Sita.Web.Controllers
                     {
                         var mylistIDs = _db.lutGeneralQuestions.Where(x => x.Experience.Contains("10") && x.Experience != null && x.QCategoryID == 2).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
                         if (mylistIDs.Count() > 0){
-                            //foreach (var d in mylistIDs) { lstExperience.Add(d); }
                             foreach (var s in CandidateVacancyResponseID) 
                             { 
                                 if (mylistIDs[i].ToString() == s.ToString()) 
