@@ -1315,6 +1315,20 @@ namespace eRecruitment.Sita.Web.Controllers
                         }
                     }
 
+                    if (educationQualTypefID.Count() < list.Count())
+                    {
+                        for (i = 0; i < educationQualTypefID.Count(); i++)
+                        {
+                            foreach (var d in list)
+                            {
+                                if (educationQualTypefID[i] > d.Value)
+                                {
+                                    isMatched = true;
+                                }
+                            }
+                        }
+                    }
+
                 if (isMatched == false)
                 {
                     Session["QualificationNotMatchProfile"] = "true";
@@ -1323,55 +1337,55 @@ namespace eRecruitment.Sita.Web.Controllers
             }
             //==============================================================================================================
             //===========================Peter - 20221104 Profile against Work Exeperience==================================
-            if (CandidateVacancyResponseID != null)
-            {
-                string prfleID = (from a in _db.tblProfiles where a.UserID == uid select a.pkProfileID).FirstOrDefault().ToString();
-                var intWorkExperience = _db.proc_eRecruitmentWorkExperienceVSProfile(prfleID).ToString();
-                List<int?> lstExperience = new List<int?>();
-                bool isMatched = false;
+            //if (CandidateVacancyResponseID != null)
+            //{
+            //    string prfleID = (from a in _db.tblProfiles where a.UserID == uid select a.pkProfileID).FirstOrDefault().ToString();
+            //    var intWorkExperience = _db.proc_eRecruitmentWorkExperienceVSProfile(prfleID).ToString();
+            //    List<int?> lstExperience = new List<int?>();
+            //    bool isMatched = false;
 
-                for (int i = 1; i < 10; i++) {
-                    if (Convert.ToInt32(intWorkExperience) < 10)
-                    {
+            //    for (int i = 1; i < 10; i++) {
+            //        if (Convert.ToInt32(intWorkExperience) < 10)
+            //        {
                        
-                        var mylistIDs = _db.lutGeneralQuestions.Where(x => (x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2) || (Convert.ToInt32(intWorkExperience) >= Convert.ToInt32(x.Experience.Substring(0, 1)) && Convert.ToInt32(intWorkExperience) <= Convert.ToInt32(x.Experience.Substring(4, 1))) || (Convert.ToInt32(intWorkExperience) > Convert.ToInt32(x.Experience.Substring(0, 1)))).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
+            //            var mylistIDs = _db.lutGeneralQuestions.Where(x => (x.Experience.Contains(intWorkExperience) && x.Experience != null && x.QCategoryID == 2) || (Convert.ToInt32(intWorkExperience) >= Convert.ToInt32(x.Experience.Substring(0, 1)) && Convert.ToInt32(intWorkExperience) <= Convert.ToInt32(x.Experience.Substring(4, 1))) || (Convert.ToInt32(intWorkExperience) > Convert.ToInt32(x.Experience.Substring(0, 1)))).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
 
-                        if (mylistIDs.Count() > 0){
-                            foreach (var d in CandidateVacancyResponseID)
-                            {
-                                if (mylistIDs[i].ToString() == d.ToString())
-                                {
-                                    isMatched = true;
-                                    break;
-                                }
-                                i = 0;
-                            }
-                            break;
-                        }
-                    }
-                    if (Convert.ToInt32(intWorkExperience) >= 10)
-                    {
-                        var mylistIDs = _db.lutGeneralQuestions.Where(x => x.Experience.Contains("10") && x.Experience != null && x.QCategoryID == 2).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
-                        if (mylistIDs.Count() > 0){
-                            foreach (var s in CandidateVacancyResponseID) 
-                            { 
-                                if (mylistIDs[i].ToString() == s.ToString()) 
-                                { 
-                                    isMatched = true; 
-                                    break;
-                                }
-                                i = 0;
-                            }
-                            break;
-                        }
-                    }
-                }
-                if (isMatched == false)
-                {
-                    Session["WorkExperienceNotMatchProfile"] = "true";
-                    return RedirectToAction("ViewVacancyForApplying", new { id = id });
-                }
-            }
+            //            if (mylistIDs.Count() > 0){
+            //                foreach (var d in CandidateVacancyResponseID)
+            //                {
+            //                    if (mylistIDs[i].ToString() == d.ToString())
+            //                    {
+            //                        isMatched = true;
+            //                        break;
+            //                    }
+            //                    i = 0;
+            //                }
+            //                break;
+            //            }
+            //        }
+            //        if (Convert.ToInt32(intWorkExperience) >= 10)
+            //        {
+            //            var mylistIDs = _db.lutGeneralQuestions.Where(x => x.Experience.Contains("10") && x.Experience != null && x.QCategoryID == 2).Select(x => x.id).OrderBy(n => n).Distinct().ToList();
+            //            if (mylistIDs.Count() > 0){
+            //                foreach (var s in CandidateVacancyResponseID) 
+            //                { 
+            //                    if (mylistIDs[i].ToString() == s.ToString()) 
+            //                    { 
+            //                        isMatched = true; 
+            //                        break;
+            //                    }
+            //                    i = 0;
+            //                }
+            //                break;
+            //            }
+            //        }
+            //    }
+            //    if (isMatched == false)
+            //    {
+            //        Session["WorkExperienceNotMatchProfile"] = "true";
+            //        return RedirectToAction("ViewVacancyForApplying", new { id = id });
+            //    }
+            //}
             //==============================================================================================================
 
             //=============================================Peter - 20221012=================================================
